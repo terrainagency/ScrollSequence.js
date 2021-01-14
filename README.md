@@ -1,10 +1,11 @@
 # ScrollSequence.js
 
-Dependencies: GSAP, GSAP Scroll Trigger
+Dependencies: none
+Recommended: GSAP, GSAP Scroll Trigger
 
 ## Usage
 
-GSAP ScrollSequence is a <1kb (minified) object built for Terrain's Ghost library.
+ScrollSequence is a <1kb (minified) object built for Terrain's Ghost library.
 
 The goal of ScrollSequence is to create an efficient workflow for building scroll based pages. ScrollSequence is configured partially through HTML to allow sequence content to be easily modified over time.
 
