@@ -91,6 +91,7 @@ sequence.panels.forEach(panel => {
 Panels are the main building blocks of a sequence.
 
 Option | Default
+------------ | ------------
 [data-name] | undefined
 [data-height] | undefined
 
@@ -99,5 +100,6 @@ Option | Default
 States are child elements of a panel that contain a section of content
 
 Option | Default
+------------ | ------------
 [data-name] | undefined
 [data-height] | flex-auto
