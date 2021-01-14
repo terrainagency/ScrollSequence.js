@@ -1,7 +1,6 @@
 # ScrollSequence.js
 
-Dependencies: none
-Recommended: GSAP, GSAP Scroll Trigger
+Dependencies(recommended): GSAP, GSAP Scroll Trigger
 
 ## Usage
 
