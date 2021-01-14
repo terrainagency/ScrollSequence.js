@@ -7,11 +7,6 @@ export class ScrollSequence {
         this.init()
     }
     init() {
-        this.initPanels()
-        
-        console.log(this)
-    }
-    initPanels() {
         let panels = document.querySelectorAll(this.settings.panels)
 
         panels.forEach(panel => {
@@ -21,7 +16,7 @@ export class ScrollSequence {
                 name: panel.dataset.name,
                 container: panel,
                 height: parseFloat(panel.dataset.height) * 100,
-                trigger: null,
+                trigger: undefined,
                 states: (() => {
                     let arr = []
                     states.forEach(state => {
@@ -29,14 +24,12 @@ export class ScrollSequence {
                             name: state.dataset.name,
                             container: state,
                             height: parseFloat(state.dataset.height) * 100,
-                            trigger: null,
-                            // tl: null,
+                            trigger: undefined,
                         }
                         arr.push(obj)
                     })
                     return arr
                 })(),
-                // tl: null,
             }
             this.panels.push(obj)
 
@@ -49,14 +42,11 @@ export class ScrollSequence {
 
             // Add each state to trigger container
             for(let i = 0; i < obj.states.length; i++) {
-                console.log("state: " + i + " of " + (obj.states.length-1))
-
                 str += `<div data-state`
                 if(obj.states[i].name) {str += ` data-name="${obj.states[i].name}"`}
                 if(obj.states[i].height) {str += ` style="height: ${obj.states[i].height}vh"`}
                 else {str+= ` class="flex-auto"`}
                 str += `></div>`
-
             }
             str += `</div>`
             this.triggerContainer.innerHTML += str

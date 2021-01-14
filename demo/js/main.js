@@ -10,6 +10,24 @@ document.addEventListener('DOMContentLoaded', () => {
     })
 
     // Master timeline for each panel
+    sequence.panels.forEach(panel => {
+        switch(panel.name) {
+            case "myPanel":
+                // Define master timeline
+                let master = new TimelineMax({paused: true})
 
-    // Attach timelines to events
+                gsap.registerPlugin(ScrollTrigger)
+                
+                ScrollTrigger.create({
+                    trigger: panel.trigger,
+                    start: "top",
+                    end: "bottom",
+                    toggleActions: "play pause resume reset",
+                    animation: master,    
+                    onEnter: () => console.log(panel),
+                    markers: true,
+                })
+            break
+        }
+    })
 })
