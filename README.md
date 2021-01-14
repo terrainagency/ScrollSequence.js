@@ -68,7 +68,7 @@ sequence.panels.forEach(panel => {
 
 > Switch statements are recommended as an easy and transparent way to specify functions to a specfic panel. 
 
-## 4: Create a master timeline and ScrollTrigger for each panel
+## 4: Create a master timeline and ScrollTrigger for each panel (optional)
 
 ```javascript
 sequence.panels.forEach(panel => {
@@ -93,6 +93,8 @@ sequence.panels.forEach(panel => {
     }
 }
 ```
+
+> NOTE: the above is only an example of how to work with ScrollSequence.js, it can always be configured to suit your needs.
 
 ## Panels
 
