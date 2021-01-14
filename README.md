@@ -1,4 +1,4 @@
-# GSAP Scroll Sequence
+# ScrollSequence.js
 
 Dependencies: GSAP, GSAP Scroll Trigger
 
