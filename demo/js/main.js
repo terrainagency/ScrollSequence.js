@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 let master = new TimelineMax({paused: true})
 
                 gsap.registerPlugin(ScrollTrigger)
-                
+
                 ScrollTrigger.create({
                     trigger: panel.trigger,
                     start: "top",
@@ -27,7 +27,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     onEnter: () => console.log(panel),
                     markers: true,
                 })
-            break
+                break
+            default:
+                console.log("Error: panel.name not found")
         }
     })
 })

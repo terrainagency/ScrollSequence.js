@@ -56,6 +56,8 @@ sequence.panels.forEach(panel => {
         case "myPanel":
             // do something
             break
+        default:
+            console.log("Error: panel.name not found")
     }
 }
 ```
@@ -81,7 +83,9 @@ sequence.panels.forEach(panel => {
                 onEnter: () => console.log(panel),
                 markers: true,
             })
-        break
+            break
+        default:
+            console.log("Error: panel.name not found")
     }
 }
 ```
