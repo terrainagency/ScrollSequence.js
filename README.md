@@ -113,3 +113,9 @@ Option | Default
 ------------ | ------------
 [data-name] | undefined
 [data-height] | flex-auto
+
+## Status
+
+ScrollSequence.js is a part of Terrain's Ghost library, and is currently in development. Ghost is a library of foundational code blocks, designed for practical use on projects built with GSAP and Tailwind.
+
+Ghost's code is non-obtrusive, and does not create any actions without your direction. It is designed to be as agnostic as possible, allowing it to function freely accross a large variety of applications.
