@@ -70,10 +70,7 @@ debug | boolean or object {r,g,b} | false | Turns debug mode off/on
 The debug color settings can be overwritten by setting debug to an object: 
 
 ```javascript
-const sequence = new ScrollSequence({
-    // your settings
-    debug: {r: "144", g: "100", b: "35"}
-})
+debug: {r: "144", g: "100", b: "35"}
 ```
 
 
