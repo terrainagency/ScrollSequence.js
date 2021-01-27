@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // paddingTop: 0.5
         // paddingBottom: 0.5
-        
+
         debug: true,
     })
 
@@ -21,8 +21,8 @@ document.addEventListener('DOMContentLoaded', () => {
         switch(panel.name) {
 
             case "intro":
-            case "features":
-            case "buybox":
+            case "Gallery":
+            case "SnapSlider":
 
                 (() => {
                     console.log(panel.master.scrollTrigger)

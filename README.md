@@ -175,11 +175,12 @@ Ghost's code is non-obtrusive, and does not create any actions without your dire
 - [ ] Add support for media queries
 - [ ] Allow users to set their own scrollTrigger defaults
 - [ ] Allow users to set their own default color for debug
-- [ ] Set defaults for container and panel queries
+- [x] Set defaults for container and panel queries
  
 # Known issues
 
 * data-height may violate the separation of concerns as it pertains more to animation than the content itself. 
+* trigger container may violate the separation of concerns as it is required for functionality.
 
 ## License
 
