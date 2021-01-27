@@ -39,10 +39,12 @@ import {ScrollSequence} from './utils.js'
 ## 2: Create a ScrollSequence
 
 ```javascript
-let sequence = new ScrollSequence({
-    container: "[data-sequence]",
-    panels: "[data-panel]",
-    triggerContainer: "[data-triggers]",
+const sequence = new ScrollSequence({
+    container: document.querySelector("[data-sequence]"),
+    triggerContainer: document.querySelector("[data-triggers]"),
+    panelsContainer: document.querySelector("[data-panels]"),
+    panels: document.querySelectorAll("[data-panel]"),
+    debug: true,
 })
 ```
 
@@ -57,39 +59,45 @@ triggerContainer | string | Defines query paramenters for the trigger container
 ```javascript
 sequence.panels.forEach(panel => {
     switch(panel.name) {
-        case "myPanel":
-            // do something
+        case "PanelName":
+
+            (() => {
+
+                // Do something
+
+            })()
+
             break
-        default:
-            console.log("Error: panel.name not found")
     }
 }
 ```
 
-> Switch statements are recommended as an easy and transparent way to specify functions to a specfic panel. 
+> PanelName must match the data-panel value in the sequence object.
 
-## 4: Create a master timeline and ScrollTrigger for each panel (optional)
+## 4: Con
+
+Each panel contains a master timeline `panel.master` containing a scrollTrigger `panel.master.scrollTrigger` instance. 
 
 ```javascript
 sequence.panels.forEach(panel => {
     switch(panel.name) {
-        case "myPanel":
-            let master = new TimelineMax({paused: true})
+        case "PanelName":
 
-            gsap.registerPlugin(ScrollTrigger)
+            (() => {
 
-            ScrollTrigger.create({
-                trigger: panel.trigger,
-                start: "top",
-                end: "bottom",
-                toggleActions: "play pause resume reset",
-                animation: master,    
-                onEnter: () => console.log(panel),
-                markers: true,
-            })
+                function yourTimeline() {
+                    let tl = gsap.timeline({paused: true})
+
+                    tl.to(el, {options})
+
+                    return tl
+                }
+
+                panel.master.add(yourTimeline())
+
+            })()
+
             break
-        default:
-            console.log("Error: panel.name not found")
     }
 }
 ```
@@ -114,11 +122,27 @@ Option | Default
 [data-name] | undefined
 [data-height] | flex-auto
 
+# Known issues
+
+Sequence object does not need to contain panels. The original code is not nearly as agnostic as it could be. It is currently agnostic by input but not agnostic by function. Each function should run as separately as possible to ensure long term flexibility.
+
+ScrollSequence should come prebuilt with some visuals to help build out the original sequence template. This will be useful when building the structure of the page.
+
 ## Status
 
 ScrollSequence.js is a part of Terrain's Ghost library, and is currently in development. Ghost is a library of foundational code blocks, designed for practical use on projects built with GSAP and Tailwind.
 
 Ghost's code is non-obtrusive, and does not create any actions without your direction. It is designed to be as agnostic as possible, allowing it to function freely accross a large variety of applications.
+
+- [x] Basic architecture 
+- [x] Integrate base panel ScrollTriggers
+- [ ] Add padding parameter to sequence object [default: 50vh]
+- [ ] Allow panels to snap to tl labels
+- [ ] Switch all debug css to inline styles
+- [ ] Update on browser resize
+- [ ] Add support for media queries
+- [ ] Allow users to set their own scrollTrigger defaults
+- [ ] Allow users to set their own default color for debug
 
 ## License
 
