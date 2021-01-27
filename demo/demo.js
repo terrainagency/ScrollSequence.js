@@ -1,15 +1,9 @@
-import {ScrollSequence} from './ScrollSequence.js'
-import * as _ from './utils.js'
+import {ScrollSequence} from './utils/components/ScrollSequence.js'
 
 document.addEventListener('DOMContentLoaded', () => {
 
     // 2. Create a new ScrollSequence
-    const sequence = new ScrollSequence({
-
-        // paddingTop: 0.5
-        // paddingBottom: 0.5
-        debug: true,
-    })
+    const sequence = new ScrollSequence({debug: true})
 
     // 3. Define animations for each panel
     sequence.panels.forEach(panel => {

@@ -46,11 +46,20 @@ import {ScrollSequence} from './utils.js'
 
 ## 2: Create a new ScrollSequence
 
+Most of the time, creating a new ScrollSequence looks like the line below:
+
+```javascript
+const sequence = new ScrollSequence({debug: true})
+```
+
+If you have multiple ScrollSequences on a single page, or need to configure custom options:
+
 ```javascript
 const sequence = new ScrollSequence({
     container: "[data-sequence]",
     panelsContainer: "[data-panels]", 
     triggerContainer: "[data-triggers]",
+    sequencePadding: 0.5,
     panels: "[data-panel]", 
     debug: true 
 })
@@ -61,8 +70,10 @@ Key | Type | Default | Description
 container | string | [data-sequence] | Selector for the sequence
 panelsContainer | string | [data-panels] | Selector of sequence panels to pin
 triggerContainer | string | [data-triggers] | Selector for triggers to be placed in
+sequencePadding | number | 0.5 | Defines space between the pinned trigger element and panels
 panels | string | [data-panel] | Selector for panels
 debug | boolean or {r,g,b} | false | Turns debug mode off/on
+
 
 ## 3: Define animations for each panel
 
@@ -164,14 +175,16 @@ Ghost's code is non-obtrusive, and does not create any actions without your dire
 
 - [x] Basic architecture 
 - [x] Integrate base panel ScrollTriggers
-- [ ] Add padding parameter to sequence object with a default
+- [x] Add padding parameter to sequence object with a default
 - [ ] Allow panels to snap to tl labels
-- [ ] Switch all debug css to inline styles
+- [x] Switch all debug css to inline styles
 - [ ] Update on browser resize
 - [ ] Add support for media queries
 - [ ] Allow users to set their own scrollTrigger defaults
-- [ ] Allow users to set their own default color for debug
+- [x] Allow users to set their own default color for debug
 - [x] Set defaults for container and panel queries
+- [ ] Create a webpack dev environment for Ghost repositories
+- [ ] Update branding for Ghost repositories
  
 # Known issues
 
