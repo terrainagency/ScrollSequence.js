@@ -6,9 +6,9 @@ Demo: https://terrainagency.com/ghost/objects/scrollsequence/demo
 
 ## Usage
 
-ScrollSequence is a <1kb (minified) object built for Terrain's Ghost library.
+ScrollSequence is a <1kb (minified) object that creates a pinned sequence of panels. Each panels contains a master timelines with a scrollTrigger instance. 
 
-ScrollSequence.js creates a pinned sequence of master timelines each containing scrollTrigger a instance. The goal of ScrollSequence is to create an efficient workflow for building scroll based pages by advocating for separation of concern through restricting content to HTML, and animation to javascript. 
+The goal of ScrollSequence is to create an efficient workflow for building scroll based pages by advocating for separation of concern through restricting content to HTML, and animation to javascript. 
 
 
 ```javascript
@@ -47,7 +47,7 @@ import {ScrollSequence} from './utils.js'
 
 > The `data-name` attribute attached to panels and states must have a value in order for them to be referenced.
 
-## 2: Create a ScrollSequence
+## 2: Create a new ScrollSequence
 
 ```javascript
 const sequence = new ScrollSequence({
@@ -55,7 +55,7 @@ const sequence = new ScrollSequence({
     panelsContainer: "[data-panels]", 
     triggerContainer: "[data-triggers]",
     panels: "[data-panel]", 
-    debug: true,
+    debug: true, // 
 })
 ```
 
@@ -65,10 +65,13 @@ container | string | [data-sequence] | Selector for the sequence
 panelsContainer | string | [data-panels] | Selector of sequence panels to pin
 triggerContainer | string | [data-triggers] | Selector for triggers to be placed in
 panels | string | [data-panel] | Selector for panels
-debug | boolean | false | Turns debug mode off/on
+debug | boolean or object {r,g,b} | false | Turns debug mode off/on
+
+> The debug color settings can be overwritten by setting debug to an object. 
+> Ex: `{r: "144", g: "100", b: "35"}`
 
 
-## 3: Loop through panels
+## 3: Define animations for each panel
 
 ```javascript
 sequence.panels.forEach(panel => {

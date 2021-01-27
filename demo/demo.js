@@ -1,31 +1,26 @@
 import {ScrollSequence} from './ScrollSequence.js'
+import * as _ from './utils.js'
 
 document.addEventListener('DOMContentLoaded', () => {
 
-    // Create and define sequence
+    // 2. Create a new ScrollSequence
     const sequence = new ScrollSequence({
-        // container: "[data-sequence]",
-        // triggerContainer: "[data-triggers]",
-        // panelsContainer: "[data-panels]",
-        // panels: "[data-panel]",
 
         // paddingTop: 0.5
         // paddingBottom: 0.5
-
         debug: true,
     })
 
-    // Create Panels
+    // 3. Define animations for each panel
     sequence.panels.forEach(panel => {
-
         switch(panel.name) {
 
-            case "intro":
+            case "Intro":
             case "Gallery":
             case "SnapSlider":
 
                 (() => {
-                    console.log(panel.master.scrollTrigger)
+                    // console.log(panel.master.scrollTrigger)
                     // let master = gsap.timeline({
                     //     scrollTrigger: {
                     //         trigger: `[data-trigger="${panel.name}"]`,
@@ -82,9 +77,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 })()
 
                 break
-
-            default:
-                console.log(`Panel not found: switch value "${panel.name}" does not match an existing data-panel value`)
         }
     })
 })
