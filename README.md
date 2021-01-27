@@ -39,9 +39,6 @@ import {ScrollSequence} from './utils.js'
             </div>
         </section>
     </div>
-
-    <!-- Trigger Container -->
-    <div data-triggers class="relative w-full"></div>
 </div>
 ```
 
@@ -65,14 +62,7 @@ container | string | [data-sequence] | Selector for the sequence
 panelsContainer | string | [data-panels] | Selector of sequence panels to pin
 triggerContainer | string | [data-triggers] | Selector for triggers to be placed in
 panels | string | [data-panel] | Selector for panels
-debug | boolean or object {r,g,b} | false | Turns debug mode off/on
-
-The debug color settings can be overwritten by setting debug to an object: 
-
-```javascript
-debug: {r: "144", g: "100", b: "35"}
-```
-
+debug | boolean or {r,g,b} | false | Turns debug mode off/on
 
 ## 3: Define animations for each panel
 

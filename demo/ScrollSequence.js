@@ -3,29 +3,27 @@ import {query} from './utils/query.js'
 export class ScrollSequence {
     constructor(settings) {
         this.container = query(settings.container, "[data-sequence]")
-        this.triggerContainer = query(settings.triggerContainer, "[data-triggers]")
+        this.triggerContainer = (() => {
+            this.container.innerHTML += `<!-- Trigger Container --><div data-triggers style="padding: 50vh 0"></div>`
+            return document.querySelector("[data-triggers]")
+        })()
         this.panelsContainer = query(settings.panelsContainer, "[data-panels]")
         this.panelsArr = query(settings.panels, "[data-panel]", true)
         this.debug = (() => {
             let debug = settings.debug
-            if(debug === true) {debug = {
-                    primary: "#0059FE",
-                    secondary: "#F7B603",
-                    bg: "rgba(166,218,255,0.25)"
-                }
-            } else if(typeof debug === 'object') {
-                debug = {
-                    primary: `rgb(${debug.r},${debug.g},${debug.b})`,
-                    secondary: `rgba(${debug.r},${debug.g},${debug.b},0.25)`,
-                    bg: `rgba(${debug.r},${debug.g},${debug.b},0.25)`
-                }
+            if(debug === true) {debug = {primary: "#0059FE", secondary: "#F7B603", bg: "rgba(166,218,255,0.25)"}} 
+            else if(typeof debug === 'object') {
+                debug = {primary: `rgb(${debug.r},${debug.g},${debug.b})`, secondary: `rgba(${debug.r},${debug.g},${debug.b},0.25)`, bg: `rgba(${debug.r},${debug.g},${debug.b},0.25)`}
             }
-
             return debug
         })()
         this.init()
     }
     init() {
+
+        // this.container.innerHTML += `<!-- Trigger Container --><div data-triggers style="padding: 50vh 0"></div>`
+        // this.triggerContainer = document.querySelector("[data-triggers]")
+
         this.panels = this.buildPanels()
 
         if(this.debug) {this.initDebug()}
@@ -35,7 +33,7 @@ export class ScrollSequence {
     buildPanels() {
         let arr = []
 
-        this.panelsArr.forEach(panel => {
+        this.panelsArr.forEach((panel, i) => {
             let obj = {
                 container: panel,
                 name: panel.dataset.panel,
@@ -46,7 +44,11 @@ export class ScrollSequence {
             let str = `<div data-trigger`
             if(obj.name) {str += `="${obj.name}"`}
             // str += ` class="border-t border-blue-500 p-4 text-blue-500 text-sm z-0"`
-            if(this.debug){str += ` style="border-top: 1px solid ${this.debug.primary}; padding: 1rem; color: ${this.debug.primary}; font-size: .875rem; line-height: 1.25rem; height: ${obj.height}vh`}
+            if(this.debug){
+                str += ` style="background-color: ${this.debug.bg}; padding: 1rem; color: ${this.debug.primary}; font-size: .875rem; line-height: 1.25rem; height: ${obj.height}vh; border-top: 1px solid ${this.debug.primary};`
+                if(i === this.panelsArr.length - 1) {str += `border-bottom: 1px solid ${this.debug.primary};`}
+            }
+            
             else {str += ` style="height: ${obj.height}vh"`}
             str += `">`
             if(this.debug){str += `${obj.name}`}
@@ -69,6 +71,8 @@ export class ScrollSequence {
                 pin: this.panelsContainer,
                 onEnter: () => {},
                 onEnterBack: () => {},
+                onLeave: () => {},
+                onEnterBack: () => {},
                 onUpdate: self => {if(this.debug){this.showSequenceProg.innerHTML = self.progress.toFixed(2)}},
                 pinSpacing: false,
                 markers: false,
@@ -87,14 +91,12 @@ export class ScrollSequence {
         })
     }
     initDebug() {
-                    // <div class="absolute top-0 flex flex-col justify-end w-full h-screen p-4 text-sm" style="background-color: rgba(166, 218, 255, 0.2); box-shadow: inset 0 0 0 1px #0059fe; color: #0059fe;">
-
         this.panelsContainer.innerHTML += `
             <div style="position: absolute; width: 100%; height: 100vh; padding: 1rem; font-size: .875rem; line-height: 1.25rem; background-color: ${this.debug.bg}; box-shadow: inset 0 0 0 1px ${this.debug.primary}; color: ${this.debug.primary};">
                 <div>
                     <p>panel: <span id="debug-sequence-current">undefined</span></p>
                     <p>progression: <span id="debug-panel-progress">undefined</span></p>
-                    <p>length: <span id="debug-panel-height">undefined</span>vh</p>
+                    <p>length: <span id="debug-panel-height">undefined</span></p>
                     <br />
                     <p>sequence: ${this.container.dataset.sequence}</p>
                     <p>progression: <span id="debug-sequence-progress">0</span></p>
@@ -113,9 +115,22 @@ export class ScrollSequence {
             markers: {startColor: this.debug.primary, endColor: this.debug.secondary, fontSize: "10px", indent: 10},
             onEnter: self => {
                 this.showCurrentSeq.innerHTML = self.trigger.dataset.trigger
-                this.showPanelHeight.innerHTML = self.trigger.offsetHeight / window.innerHeight * 100
+                this.showPanelHeight.innerHTML = self.trigger.offsetHeight / window.innerHeight * 100 + "vh"
             },
-            onEnterBack: self => this.showCurrentSeq.innerHTML = self.trigger.dataset.trigger,
+            onEnterBack: self => {
+                this.showCurrentSeq.innerHTML = self.trigger.dataset.trigger
+                this.showPanelHeight.innerHTML = self.trigger.offsetHeight / window.innerHeight * 100 + "vh"
+            },
+            onLeave: () => {
+                this.showCurrentSeq.innerHTML = undefined
+                this.showPanelProg.innerHTML = undefined
+                this.showPanelHeight.innerHTML = undefined
+            },
+            onLeaveBack: () => {
+                this.showCurrentSeq.innerHTML = undefined
+                this.showPanelProg.innerHTML = undefined
+                this.showPanelHeight.innerHTML = undefined
+            },
             onUpdate: self => this.showPanelProg.innerHTML = self.progress.toFixed(2),
         })
 
