@@ -55,7 +55,7 @@ const sequence = new ScrollSequence({
     panelsContainer: "[data-panels]", 
     triggerContainer: "[data-triggers]",
     panels: "[data-panel]", 
-    debug: true, // 
+    debug: true 
 })
 ```
 
@@ -71,6 +71,7 @@ The debug color settings can be overwritten by setting debug to an object:
 
 ```javascript
 const sequence = new ScrollSequence({
+    // your settings
     debug: {r: "144", g: "100", b: "35"}
 })
 ```
