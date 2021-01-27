@@ -4,12 +4,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Create and define sequence
     const sequence = new ScrollSequence({
-        container: document.querySelector("[data-sequence]"),
-        triggerContainer: document.querySelector("[data-triggers]"),
-        panelsContainer: document.querySelector("[data-panels]"),
-        panels: document.querySelectorAll("[data-panel]"),
+        // container: "[data-sequence]",
+        // triggerContainer: "[data-triggers]",
+        // panelsContainer: "[data-panels]",
+        // panels: "[data-panel]",
+
         // paddingTop: 0.5
         // paddingBottom: 0.5
+        
         debug: true,
     })
 

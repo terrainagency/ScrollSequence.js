@@ -45,29 +45,28 @@ import {ScrollSequence} from './utils.js'
 </div>
 ```
 
-> The`data-name` attribute attached to panels and states must have a value in order for them to be referenced.
+> The `data-name` attribute attached to panels and states must have a value in order for them to be referenced.
 
 ## 2: Create a ScrollSequence
 
 ```javascript
 const sequence = new ScrollSequence({
-    container: document.querySelector("[data-sequence]"),
-    panelsContainer: document.querySelector("[data-panels]"), 
-    triggerContainer: document.querySelector("[data-triggers]"),
-    panels: document.querySelectorAll("[data-panel]"), 
+    container: "[data-sequence]",
+    panelsContainer: "[data-panels]", 
+    triggerContainer: "[data-triggers]",
+    panels: "[data-panel]", 
     debug: true,
 })
 ```
 
-Key | Type | Description
------------- | ------------ | ------------
-container* | element | Container element for the sequence
-panelsContainer* | element | Container of sequence panels to pin
-triggerContainer* | element | Container element for triggers to be placed in
-panels* | element arr | Array of panels
+Key | Type | Default | Description
+------------ | ------------ | ------------ | ------------
+container* | string | [data-sequence] | Selector for the sequence
+panelsContainer* | string | [data-panels] | Selector of sequence panels to pin
+triggerContainer* | string | [data-triggers] | Selector for triggers to be placed in
+panels* | string | [data-panel] | Selector for panels
 debug | boolean | Turns debug mode off/on
 
-> *required
 
 ## 3: Loop through panels
 

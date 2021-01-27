@@ -1,15 +1,32 @@
 export class ScrollSequence {
     constructor(settings) {
-        this.container = settings.container
-        this.triggerContainer = settings.triggerContainer
-        this.panelsContainer = settings.panelsContainer
-        this.panels = this.createPanels(settings.panels)
+        this.container = this.query(settings.container, "[data-sequence]")
+        this.triggerContainer = this.query(settings.triggerContainer, "[data-triggers]")
+        this.panelsContainer = this.query(settings.panelsContainer, "[data-panels]")
+        this.panelsArr = this.queryAll(settings.panels, "[data-panel]")
+        this.panels = this.initPanels()
         this.debug = settings.debug
         this.init()
     }
-    createPanels(panels) {
+    query(el, d) {
+        let element = el
+        if(element === undefined) {
+            element = d
+        }
+        return document.querySelector(element)
+    }
+    queryAll(el, d) {
+        let element = el
+        if(element === undefined) {
+            element = d
+        }
+        return document.querySelectorAll(element)
+    }
+    initPanels() {
+
         let arr = []
-        panels.forEach(panel => {
+
+        this.panelsArr.forEach(panel => {
             let obj = {
                 container: panel,
                 name: panel.dataset.panel,
@@ -25,12 +42,14 @@ export class ScrollSequence {
             this.triggerContainer.innerHTML += str
 
             arr.push(obj)
-
         })
 
         return arr
     }
     init() {
+
+        console.log(this)
+
         if(this.debug) {this.initDebug()}
 
         // Pin the sequence
@@ -50,6 +69,7 @@ export class ScrollSequence {
 
 
         this.panels.forEach(panel => {
+            console.log(panel.trigger)
             panel.master = gsap.timeline({
                 scrollTrigger: {
                     trigger: `[data-trigger="${panel.name}"]`,
