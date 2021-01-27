@@ -1,12 +1,15 @@
 # ScrollSequence.js
 
-Dependencies(recommended): GSAP, GSAP Scroll Trigger
+Dependencies: GSAP, GSAP Scroll Trigger
+
+Demo: https://terrainagency.com/ghost/objects/scrollsequence/demo
 
 ## Usage
 
 ScrollSequence is a <1kb (minified) object built for Terrain's Ghost library.
 
-The goal of ScrollSequence is to create an efficient workflow for building scroll based pages. ScrollSequence is configured partially through HTML to allow sequence content to be easily modified over time.
+ScrollSequence.js creates a pinned sequence of master timelines each containing scrollTrigger a instance. The goal of ScrollSequence is to create an efficient workflow for building scroll based pages. It advocates for separation of concern through dividing content to HTML, and animation to javascript. This allow sequence content to be easily modified over time, and makes jumping between projects accross clients easier.
+
 
 ```javascript
 import {ScrollSequence} from './utils.js'
@@ -42,8 +45,8 @@ import {ScrollSequence} from './utils.js'
 const sequence = new ScrollSequence({
     container: document.querySelector("[data-sequence]"),
     triggerContainer: document.querySelector("[data-triggers]"),
-    panelsContainer: document.querySelector("[data-panels]"),
-    panels: document.querySelectorAll("[data-panel]"),
+    panelsContainer: document.querySelector("[data-panels]"), 
+    panels: document.querySelectorAll("[data-panel]"), 
     debug: true,
 })
 ```
@@ -59,6 +62,7 @@ triggerContainer | string | Defines query paramenters for the trigger container
 ```javascript
 sequence.panels.forEach(panel => {
     switch(panel.name) {
+
         case "PanelName":
 
             (() => {

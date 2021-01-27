@@ -54,23 +54,19 @@ document.addEventListener('DOMContentLoaded', () => {
                         }
                     })
     
-                    // let states = panel.container.querySelectorAll("[data-state]")
+                    let states = panel.container.querySelectorAll("[data-state]")
     
-                    // states.forEach(state => {
-                    //     let name = state.dataset.state
-                    //     master.addLabel(name)
+                    states.forEach(state => {
+                        let name = state.dataset.state
+                        master.addLabel(name)
     
-                    //     function animateChair() {
-                    //         let tl = gsap.timeline()
-                    //         return tl
-                    //     }
+                        let tl = gsap.timeline()
+                            // Do something
     
-                    //     master.add(animateChair())
+                        // Add to master
+                        master.add(tl)
+                    })
     
-                    // })
-    
-                    // console.log(master)
-
                     // master.addLabel("first")
                     //   .from(".box p", {scale: 0.3, rotation:45, autoAlpha: 0})
     
@@ -89,30 +85,4 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.log(`Panel not found: switch value "${panel.name}" does not match an existing data-panel value`)
         }
     })
-  
-
-
-    // // Master timeline for each panel
-    // sequence.panels.forEach(panel => {
-    //     switch(panel.name) {
-    //         case "myPanel":
-    //             // Define master timeline
-    //             let master = new TimelineMax({paused: true})
-
-    //             gsap.registerPlugin(ScrollTrigger)
-
-    //             ScrollTrigger.create({
-    //                 trigger: panel.trigger,
-    //                 start: "top",
-    //                 end: "bottom",
-    //                 toggleActions: "play pause resume reset",
-    //                 animation: master,    
-    //                 onEnter: () => console.log(panel),
-    //                 markers: true,
-    //             })
-    //             break
-    //         default:
-    //             console.log("Error: panel.name not found")
-    //     }
-    // })
 })

@@ -88,6 +88,5 @@ export class ScrollSequence {
             onUpdate: self => this.showPanelProg.innerHTML = self.progress.toFixed(2),
         })
     }
-
 }
 
