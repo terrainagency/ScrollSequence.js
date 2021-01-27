@@ -40,7 +40,7 @@ export class ScrollSequence {
             trigger: "[data-sequence]",
             start: "20px 20px",
             end: "bottom bottom",
-            pin: "[data-panels]",
+            pin: this.panelsContainer,
             onEnter: () => {},
             onEnterBack: () => {},
             onUpdate: self => this.showSequenceProg.innerHTML = self.progress.toFixed(2),

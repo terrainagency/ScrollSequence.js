@@ -8,7 +8,7 @@ Demo: https://terrainagency.com/ghost/objects/scrollsequence/demo
 
 ScrollSequence is a <1kb (minified) object built for Terrain's Ghost library.
 
-ScrollSequence.js creates a pinned sequence of master timelines each containing scrollTrigger a instance. The goal of ScrollSequence is to create an efficient workflow for building scroll based pages. It advocates for separation of concern through dividing content to HTML, and animation to javascript. This allow sequence content to be easily modified over time, and makes jumping between projects accross clients easier.
+ScrollSequence.js creates a pinned sequence of master timelines each containing scrollTrigger a instance. The goal of ScrollSequence is to create an efficient workflow for building scroll based pages by advocating for separation of concern through restricting content to HTML, and animation to javascript. 
 
 
 ```javascript
@@ -21,33 +21,23 @@ import {ScrollSequence} from './utils.js'
 <!-- ScrollSequence container -->
 <div data-sequence="genesis" class="relative w-screen min-h-screen">
     <div data-panels class="absolute w-screen h-screen">
-
-        <!-- panel: intro with a height of 200vh -->
         <section data-panel="myFirstPanel" data-height="2" class="">
 
             <!-- Content for myFirstPanel -->
 
         </section>
-
-        <!-- panel: intro with a height of 200vh -->
         <section data-panel="mySecondPanel" data-height="4" class="">
-
-            <!-- A state datatype can be used to define a  -->
             <div data-state="myFirstState">
 
                 <!-- Content for myFirstState of mySecondPanel -->
 
             </div>
-
-             <!-- A state datatype can be used to define a  -->
             <div data-state="mySecondState">
 
                 <!-- Content for mySecondState of mySecondPanel -->
 
             </div>
         </section>
-
-
     </div>
 
     <!-- Trigger Container -->
@@ -55,7 +45,7 @@ import {ScrollSequence} from './utils.js'
 </div>
 ```
 
-> Panels and states must have a `data-name` attribute in order for them to be referenced.
+> The`data-name` attribute attached to panels and states must have a value in order for them to be referenced.
 
 ## 2: Create a ScrollSequence
 
@@ -71,9 +61,12 @@ const sequence = new ScrollSequence({
 
 Key | Type | Description
 ------------ | ------------ | ------------
-container | string | Defines query paramenters for the sequence container
-panels | string | Defines query paramenters for all panels within the sequence container
-triggerContainer | string | Defines query paramenters for the trigger container
+container* | element | Container element for the sequence
+triggerContainer* | element | Container element for triggers to be placed in
+panels* | element arr | Array of panels
+debug | boolean | Turns debug mode off/on
+
+> *required
 
 ## 3: Loop through panels
 
@@ -167,12 +160,6 @@ Option | Default
 [data-name] | undefined
 [data-height] | flex-auto
 
-# Known issues
-
-Sequence object does not need to contain panels. The original code is not nearly as agnostic as it could be. It is currently agnostic by input but not agnostic by function. Each function should run as separately as possible to ensure long term flexibility.
-
-ScrollSequence should come prebuilt with some visuals to help build out the original sequence template. This will be useful when building the structure of the page.
-
 ## Status
 
 ScrollSequence.js is a part of Terrain's Ghost library, and is currently in development. Ghost is a library of foundational code blocks, designed for practical use on projects built with GSAP and Tailwind.
@@ -188,6 +175,10 @@ Ghost's code is non-obtrusive, and does not create any actions without your dire
 - [ ] Add support for media queries
 - [ ] Allow users to set their own scrollTrigger defaults
 - [ ] Allow users to set their own default color for debug
+
+# Known issues
+
+* data-height may violate the separation of concerns as it pertains more to animation than the content itself. 
 
 ## License
 
