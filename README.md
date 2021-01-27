@@ -65,7 +65,7 @@ container* | string | [data-sequence] | Selector for the sequence
 panelsContainer* | string | [data-panels] | Selector of sequence panels to pin
 triggerContainer* | string | [data-triggers] | Selector for triggers to be placed in
 panels* | string | [data-panel] | Selector for panels
-debug | boolean | Turns debug mode off/on
+debug | boolean | false | Turns debug mode off/on
 
 
 ## 3: Loop through panels
