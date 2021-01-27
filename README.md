@@ -52,8 +52,8 @@ import {ScrollSequence} from './utils.js'
 ```javascript
 const sequence = new ScrollSequence({
     container: document.querySelector("[data-sequence]"),
-    triggerContainer: document.querySelector("[data-triggers]"),
     panelsContainer: document.querySelector("[data-panels]"), 
+    triggerContainer: document.querySelector("[data-triggers]"),
     panels: document.querySelectorAll("[data-panel]"), 
     debug: true,
 })
@@ -62,6 +62,7 @@ const sequence = new ScrollSequence({
 Key | Type | Description
 ------------ | ------------ | ------------
 container* | element | Container element for the sequence
+panelsContainer* | element | Container of sequence panels to pin
 triggerContainer* | element | Container element for triggers to be placed in
 panels* | element arr | Array of panels
 debug | boolean | Turns debug mode off/on
@@ -168,14 +169,15 @@ Ghost's code is non-obtrusive, and does not create any actions without your dire
 
 - [x] Basic architecture 
 - [x] Integrate base panel ScrollTriggers
-- [ ] Add padding parameter to sequence object [default: 50vh]
+- [ ] Add padding parameter to sequence object with a default
 - [ ] Allow panels to snap to tl labels
 - [ ] Switch all debug css to inline styles
 - [ ] Update on browser resize
 - [ ] Add support for media queries
 - [ ] Allow users to set their own scrollTrigger defaults
 - [ ] Allow users to set their own default color for debug
-
+- [ ] Set defaults for container and panel queries
+ 
 # Known issues
 
 * data-height may violate the separation of concerns as it pertains more to animation than the content itself. 
