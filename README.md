@@ -18,26 +18,44 @@ import {ScrollSequence} from './utils.js'
 ## 1: HTML Structure
 
 ```HTML
-    <!-- Sequence container -->
-    <div data-sequence>
-        <!-- Panel with no states -->
-        <section data-panel data-name="myPanel1" data-height="1">
-            <!-- Canvas is recommended for performance -->
-            <canvas></canvas>
-        </section>
-        <!-- Panel with states -->
-        <section data-panel data-name="myPanel2" data-height="1.4">
-            <canvas></canvas>
-            <div data-state data-name="myState1"></div>
-            <div data-state data-name="myState2"></div>
+<!-- ScrollSequence container -->
+<div data-sequence="genesis" class="relative w-screen min-h-screen">
+    <div data-panels class="absolute w-screen h-screen">
+
+        <!-- panel: intro with a height of 200vh -->
+        <section data-panel="myFirstPanel" data-height="2" class="">
+
+            <!-- Content for myFirstPanel -->
+
         </section>
 
-        <!-- Trigger container: all generated triggers will be placed here -->
-        <div data-triggers></div>
+        <!-- panel: intro with a height of 200vh -->
+        <section data-panel="mySecondPanel" data-height="4" class="">
+
+            <!-- A state datatype can be used to define a  -->
+            <div data-state="myFirstState">
+
+                <!-- Content for myFirstState of mySecondPanel -->
+
+            </div>
+
+             <!-- A state datatype can be used to define a  -->
+            <div data-state="mySecondState">
+
+                <!-- Content for mySecondState of mySecondPanel -->
+
+            </div>
+        </section>
+
+
     </div>
+
+    <!-- Trigger Container -->
+    <div data-triggers class="relative w-full"></div>
+</div>
 ```
 
-> Panels and states must have a `data-name` attribute in order for them to be referenced. 
+> Panels and states must have a `data-name` attribute in order for them to be referenced.
 
 ## 2: Create a ScrollSequence
 
@@ -63,7 +81,7 @@ triggerContainer | string | Defines query paramenters for the trigger container
 sequence.panels.forEach(panel => {
     switch(panel.name) {
 
-        case "PanelName":
+        case "myFirstName":
 
             (() => {
 
@@ -78,26 +96,23 @@ sequence.panels.forEach(panel => {
 
 > PanelName must match the data-panel value in the sequence object.
 
-## 4: Con
+## 4: Configure Animtions
 
 Each panel contains a master timeline `panel.master` containing a scrollTrigger `panel.master.scrollTrigger` instance. 
 
 ```javascript
 sequence.panels.forEach(panel => {
     switch(panel.name) {
-        case "PanelName":
+        case "myFirstName":
 
             (() => {
 
-                function yourTimeline() {
-                    let tl = gsap.timeline({paused: true})
+                // Create a timeline
+                let tl = gsap.timeline({paused: true})
+                tl.to(el, {options})
 
-                    tl.to(el, {options})
-
-                    return tl
-                }
-
-                panel.master.add(yourTimeline())
+                // Add timeline to the master
+                panel.master.add(tl)
 
             })()
 
@@ -107,6 +122,32 @@ sequence.panels.forEach(panel => {
 ```
 
 > NOTE: the above is only an example of how to work with ScrollSequence.js, it can always be configured to suit your needs.
+
+## Advanced Example
+
+```javascript
+sequence.panels.forEach(panel => {
+    switch(panel.name) {
+        case "intro":
+
+            (() => {
+                
+                function toChair() {
+                    let tl = gsap.timeline({paused: true})
+                    tl.to(el, {options})
+
+                    return tl
+                }
+                
+                // Add timeline to the master
+                panel.master.add(toChar())
+
+            })()
+
+            break
+    }
+}
+```
 
 ## Panels
 
