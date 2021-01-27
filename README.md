@@ -67,10 +67,12 @@ triggerContainer | string | [data-triggers] | Selector for triggers to be placed
 panels | string | [data-panel] | Selector for panels
 debug | boolean or object {r,g,b} | false | Turns debug mode off/on
 
-The debug color settings can be overwritten by setting debug to an object. 
+The debug color settings can be overwritten by setting debug to an object: 
 
 ```javascript
-{r: "144", g: "100", b: "35"}
+const sequence = new ScrollSequence({
+    debug: {r: "144", g: "100", b: "35"}
+})
 ```
 
 
