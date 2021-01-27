@@ -6,11 +6,12 @@ ScrollSequence should come prebuilt with some visuals to help build out the orig
 
 
 # Checklist
-
-[x] Basic architecture
-[x] Integrate base panel ScrollTriggers
-[-] Add padding parameter to sequence object [default: 50vh]
-[-] Allow panels to snap to tl labels
-[-] Switch all debug css to inline styles
+- [x] Basic architecture 
+- [x] Integrate base panel ScrollTriggers
+- [ ] Add padding parameter to sequence object [default: 50vh]
+- [ ] Allow panels to snap to tl labels
+- [ ] Switch all debug css to inline styles
+- [ ] Update on browser resize
+- [ ] Add support for media queries
 
 
