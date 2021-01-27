@@ -3,16 +3,21 @@ import {query} from '../functions/query.js'
 export class ScrollSequence {
     constructor(settings) {
         this.container = query(settings.container, "[data-sequence]")
+        
         this.sequencePadding = (() => {
             if(!settings.sequencePadding) {return "50"}
             else{return parseFloat(settings.sequencePadding) * 100}
         })()
+
         this.triggerContainer = (() => {
             this.container.innerHTML += `<!-- Trigger Container --><div data-triggers style="padding: ${this.sequencePadding}vh 0"></div>`
             return document.querySelector("[data-triggers]")
         })()
+
         this.panelsContainer = query(settings.panelsContainer, "[data-panels]")
+
         this.panelsArr = query(settings.panels, "[data-panel]", true)
+
         this.debug = (() => {
             let debug = settings.debug
             if(debug === true) {debug = {primary: "#0059FE", secondary: "#F7B603", bg: "rgba(166,218,255,0.25)"}} 
@@ -24,14 +29,8 @@ export class ScrollSequence {
         this.init()
     }
     init() {
-
-        // this.container.innerHTML += `<!-- Trigger Container --><div data-triggers style="padding: 50vh 0"></div>`
-        // this.triggerContainer = document.querySelector("[data-triggers]")
-
         this.panels = this.buildPanels()
-
         if(this.debug) {this.initDebug()}
-
         this.buildTriggers()
     }
     buildPanels() {
@@ -47,12 +46,10 @@ export class ScrollSequence {
             // Add a new trigger elements to triggers
             let str = `<div data-trigger`
             if(obj.name) {str += `="${obj.name}"`}
-            // str += ` class="border-t border-blue-500 p-4 text-blue-500 text-sm z-0"`
             if(this.debug){
                 str += ` style="background-color: ${this.debug.bg}; padding: 1rem; color: ${this.debug.primary}; font-size: .875rem; line-height: 1.25rem; height: ${obj.height}vh; border-top: 1px solid ${this.debug.primary};`
                 if(i === this.panelsArr.length - 1) {str += `border-bottom: 1px solid ${this.debug.primary};`}
             }
-            
             else {str += ` style="height: ${obj.height}vh"`}
             str += `">`
             if(this.debug){str += `${obj.name}`}
@@ -65,11 +62,11 @@ export class ScrollSequence {
         return arr
     }
     buildTriggers() {
-        // Pin the sequence
+        // Pin the sequence container and create a master timeline and scrollTrigger
         gsap.registerPlugin(ScrollTrigger)
         this.master = gsap.timeline({
             scrollTrigger: {
-                trigger: "[data-sequence]",
+                trigger: this.container,
                 start: "20px 20px",
                 end: "bottom bottom",
                 pin: this.panelsContainer,
@@ -83,6 +80,7 @@ export class ScrollSequence {
             }
         })
 
+        // Create a master timeline and scrollTrigger for each panel
         this.panels.forEach(panel => {
             panel.master = gsap.timeline({
                 scrollTrigger: {

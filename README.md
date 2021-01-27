@@ -52,15 +52,27 @@ Most of the time, creating a new ScrollSequence looks like the line below:
 const sequence = new ScrollSequence({debug: true})
 ```
 
-If you have multiple ScrollSequences on a single page, or need to configure custom options:
+If you have multiple ScrollSequences on a single page, you will need to define a unique container element for each ScrollSequence.
+
+```javascript
+const sequence = new ScrollSequence({
+    container: "[data-sequence]",
+    debug: true 
+})
+```
+
+> Warning: The use case above is in progress and is not currently supported.
+
+If you need to configure custom options:
 
 ```javascript
 const sequence = new ScrollSequence({
     container: "[data-sequence]",
     panelsContainer: "[data-panels]", 
+    panels: "[data-panel]", 
+    states: "[data-state]", 
     triggerContainer: "[data-triggers]",
     sequencePadding: 0.5,
-    panels: "[data-panel]", 
     debug: true 
 })
 ```
@@ -69,13 +81,18 @@ Key | Type | Default | Description
 ------------ | ------------ | ------------ | ------------
 container | string | [data-sequence] | Selector for the sequence
 panelsContainer | string | [data-panels] | Selector of sequence panels to pin
+panels | string | [data-panel] | Selector for panels
+states | string | [data-state] | Selector for states
 triggerContainer | string | [data-triggers] | Selector for triggers to be placed in
 sequencePadding | number | 0.5 | Defines space between the pinned trigger element and panels
-panels | string | [data-panel] | Selector for panels
 debug | boolean or {r,g,b} | false | Turns debug mode off/on
 
 
 ## 3: Define animations for each panel
+
+Each panel contains a master timeline `panel.master` containing a scrollTrigger `panel.master.scrollTrigger` instance. 
+
+Switch statements allow for easy organization of the panels, as each `panel.master` can grow considerably in lines depending on the needs of the page.
 
 ```javascript
 sequence.panels.forEach(panel => {
@@ -98,8 +115,6 @@ sequence.panels.forEach(panel => {
 
 ## 4: Configure Animtions
 
-Each panel contains a master timeline `panel.master` containing a scrollTrigger `panel.master.scrollTrigger` instance. 
-
 ```javascript
 sequence.panels.forEach(panel => {
     switch(panel.name) {
@@ -121,13 +136,18 @@ sequence.panels.forEach(panel => {
 }
 ```
 
-> NOTE: the above is only an example of how to work with ScrollSequence.js, it can always be configured to suit your needs.
+> The above is only an example of how to work with ScrollSequence.js, it can always be configured to suit your needs.
 
 ## Advanced Example
 
 ```javascript
+import {ScrollSequence} from './utils.js'
+
+const sequence = new ScrollSequence({debug: true})
+
 sequence.panels.forEach(panel => {
     switch(panel.name) {
+
         case "intro":
 
             (() => {
@@ -185,7 +205,9 @@ Ghost's code is non-obtrusive, and does not create any actions without your dire
 - [x] Set defaults for container and panel queries
 - [ ] Create a webpack dev environment for Ghost repositories
 - [ ] Update branding for Ghost repositories
- 
+- [ ] Consider spliting this.init() into this.init() and this.run()
+- [ ] Allow for multiple ScrollSequences on a single page
+  
 # Known issues
 
 * data-height may violate the separation of concerns as it pertains more to animation than the content itself. 

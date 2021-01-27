@@ -11,52 +11,39 @@ document.addEventListener('DOMContentLoaded', () => {
 
             case "Intro":
             case "Gallery":
-            case "SnapSlider":
 
                 (() => {
-                    // console.log(panel.master.scrollTrigger)
-                    // let master = gsap.timeline({
-                    //     scrollTrigger: {
-                    //         trigger: `[data-trigger="${panel.name}"]`,
-                    //         start: "top center",
-                    //         end: "bottom center",
-                    //         // end: () => {return `+=${panel.trigger.offsetHeight}`},
-                    //         scrub: true,
-                    //     }
-                    // })
+
+                    
+
                 })()
             
                 break
 
-            case "features-disabled":
+            case "SnapSlider":
 
                 (() => {
-
-                    let master = gsap.timeline({
-                        scrollTrigger: {
-                            trigger: panel.trigger,
-                            scrub: true,
-                            // snap: {
-                            //     snapTo: "labels",
-                            //     duration: {min: 0.2, max: 3},
-                            //     delay: 0.2,
-                            //     ease: "power1.inOut" 
-                            // },
-                        }
-                    })
     
                     let states = panel.container.querySelectorAll("[data-state]")
     
                     states.forEach(state => {
-                        let name = state.dataset.state
-                        master.addLabel(name)
+                    
+
+                        // let name = 
+                        panel.master.addLabel(state.dataset.state)
     
-                        let tl = gsap.timeline()
-                            // Do something
+                        // let tl = gsap.timeline()
+                        //     // Do something
     
-                        // Add to master
-                        master.add(tl)
+                        // // Add to master
+                        // state.master.add(tl)
+
+                        
                     })
+
+                    console.log(panel.master)
+
+                    
     
                     // master.addLabel("first")
                     //   .from(".box p", {scale: 0.3, rotation:45, autoAlpha: 0})
