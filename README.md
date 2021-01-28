@@ -34,41 +34,43 @@ import {ScrollSequence} from './utils.js'
 
 ## 2: Create a new ScrollSequence
 
-Most of the time, creating a new ScrollSequence looks like the line below:
+Most of the time, creating a new ScrollSequence will look like the example below. `example1` is using default settings, while adding custom configurations for `mySnapPanel`. 
 
 ```javascript
-const sequence = new ScrollSequence({debug: true})
-```
+const example1 = new ScrollSequence({
+    debug: true,
 
-If you have multiple ScrollSequences on a single page, you will need to define a unique container element for each ScrollSequence.
+    // 3. Configure any unique panel settings
+    configPanels: {
 
-```javascript
-const sequence = new ScrollSequence({
-    container: "[data-sequence]",
-    debug: true 
+        // NOTE: Must match the associated [data-panel] value
+        mySnapPanel: {
+            snap: {
+                snapTo: "labels", 
+                duration: {min: 0.1, max: 0.4}, 
+                delay: 0.2, 
+                ease: "power1.inOut" 
+            }
+        }
+    }
 })
 ```
 
-> Warning: The use case above is in progress and is not currently supported.
+Custom panel configurations all match existing scrollTrigger settings.
 
-If you need to configure custom options:
+Key | Default
+------------ | ------------ 
+toggleActions | "play pause resume reset"
+start | "top center"
+end | "bottom center"
+scrub | 1
+snap | undefined 
+onEnter* | undefined
+onEnterBack* | undefined
+onLeaveBack* | undefined
+onUpdate* | undefined
 
-```javascript
-const sequence = new ScrollSequence({
-    container: "[data-sequence]",
-    panelsContainer: "[data-panels]", 
-    panelSelector: "[data-panel]", 
-    stateSelector: "[data-state]", 
-    triggerContainer: "[data-triggers]",
-    sequencePadding: 0.5,
-    debug: true 
-})
-```
-
-Key | Type | Default | Description
------------- | ------------ | ------------ | ------------
-configPanels* | array of objects | undefined | used to manually override scrollTrigger values
-debug* | boolean or {r,g,b} | false | Turns debug mode off/on
+> *If `debug: true`, the default for these properties will be replaced with debug display methods.
 
 Additional Settings
 
@@ -80,22 +82,22 @@ panelSelector | string | [data-panel] | Selector for panels
 stateSelector | string | [data-state] | Selector for states
 triggerContainer | string | [data-triggers] | Selector for triggers to be placed in
 sequencePadding | number | 0.5 | Defines space between the pinned trigger element and panels
+debug | boolean or {r,g,b} | false | Turns debug mode off/on
 
-## 3: Define animations for each panel
+## 3: Define architecture for panel timelines
 
-Each panel contains a master timeline `panel.master` containing a scrollTrigger `panel.master.scrollTrigger` instance. 
-
-Switch statements allow for easy organization of the panels, as each `panel.master` can grow considerably in lines depending on the needs of the page.
+Each panel contains a master timeline `panel.master` containing a scrollTrigger `panel.master.scrollTrigger` instance. ScrollSequence gives complete freedom to write `panel.master` however you prefer.
 
 ```javascript
 sequence.panels.forEach(panel => {
     switch(panel.name) {
 
-        case "myFirstName":
+        // case value must match the [data-panel] value
+        case "myPanel":
 
             (() => {
 
-                // Do something
+                // panel.master.to({})
 
             })()
 
@@ -104,36 +106,9 @@ sequence.panels.forEach(panel => {
 }
 ```
 
-> PanelName must match the data-panel value in the sequence object.
+## Ex: Snapping
 
-## 4: Configure Animtions
-
-```javascript
-sequence.panels.forEach(panel => {
-    switch(panel.name) {
-        case "myFirstName":
-
-            (() => {
-
-                // Create a timeline
-                let tl = gsap.timeline({paused: true})
-                tl.to(el, {options})
-
-                // Add timeline to the master
-                panel.master.add(tl)
-
-            })()
-
-            break
-    }
-}
-```
-
-> The above is only an example of how to work with ScrollSequence.js, it can always be configured to suit your needs.
-
-## Snapping
-
-Enable snapping by adding `data-snap="true"` to the panel. In order for snapping to function properly, you must define lables within your `panel.master` animation. 
+Enable snapping by adding `data-snap="true"` to the panel. In order for snapping to function properly, you must define labels within your `panel.master` animation. 
 
 ```html
     <section data-panel="SnapExample" data-height="2" data-snap="true" class="absolute w-screen h-screen">
@@ -144,44 +119,20 @@ Enable snapping by adding `data-snap="true"` to the panel. In order for snapping
 ```
 
 ```javascript
-case "SnapExample":
-    
-    (() => {
-        panel.master.addLabel("start")
-        panel.master.to("#rect", {rotate: 45})
-        panel.master.addLabel("intro")
-        panel.master.to("#rect", {backgroundColor: "#f0f", rotate: 0})
-        panel.master.addLabel("end")
-    })()
-
-    break
-```
-
-> NOTE: Mark sure to add a label to the start and end of the `panel.master` timeline.
-
-## Advanced Example
-
-```javascript
-import {ScrollSequence} from './utils.js'
-
-const sequence = new ScrollSequence({debug: true})
-
 sequence.panels.forEach(panel => {
     switch(panel.name) {
-
-        case "intro":
+        
+        case "myPanel":
 
             (() => {
-                
-                function toChair() {
-                    let tl = gsap.timeline({paused: true})
-                    tl.to(el, {options})
 
-                    return tl
-                }
-                
-                // Add timeline to the master
-                panel.master.add(toChar())
+                panel.master.addLabel("start") // start
+
+                panel.master.to("#rect", {rotate: 45})
+                panel.master.addLabel("intro")
+                panel.master.to("#rect", {backgroundColor: "#0059FE", rotate: 0})
+
+                panel.master.addLabel("end") // end
 
             })()
 
@@ -190,23 +141,7 @@ sequence.panels.forEach(panel => {
 }
 ```
 
-## Panels
-
-Panels are the main building blocks of a sequence.
-
-Option | Default
------------- | ------------
-[data-name] | undefined
-[data-height] | undefined
-
-## States
-
-States are child elements of a panel that contain a section of content
-
-Option | Default
------------- | ------------
-[data-name] | undefined
-[data-height] | flex-auto
+> NOTE: Mark sure to add a label to the start and end of the `panel.master` timeline.
 
 ## Status
 
@@ -214,30 +149,25 @@ ScrollSequence.js is a part of Terrain's Ghost library, and is currently in deve
 
 Ghost's code is non-obtrusive, and does not create any actions without your direction. It is designed to be as agnostic as possible, allowing it to function freely accross a large variety of applications.
 
-To Do:
+v0.1:
 
 - [x] Basic architecture 
 - [x] Integrate base panel ScrollTriggers
 - [x] Add padding parameter to sequence object with a default
 - [x] Add states to panels
 - [x] Switch all debug css to inline styles
-- [ ] Add support for setting snap defaults
+- [x] Add support for setting snap defaults
 - [ ] Update on browser resize
 - [ ] Add support for media queries
 - [x] Allow users to set their own default color for debug
 - [x] Set defaults for container and panel queries
 
-Polish:
+v1.0:
 
 - [ ] Create a webpack dev environment for Ghost repositories
 - [ ] Update branding for Ghost repositories
 - [ ] Consider spliting this.init() into this.build() and this.init()
 - [ ] Allow for multiple ScrollSequences on a single page
-  
-# Known issues
-
-* data-height may violate the separation of concerns as it pertains more to animation than the content itself. 
-* trigger container may violate the separation of concerns as it is required for functionality.
 
 ## License
 
