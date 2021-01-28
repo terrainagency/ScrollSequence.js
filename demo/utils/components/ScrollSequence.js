@@ -11,8 +11,7 @@ export class ScrollSequence {
         this.container = query(document, settings.container, "[data-sequence]") // default: [data-sequence]
         this.triggerContainer = this.buildTriggerContainer(settings.SequencePadding) 
         this.panelsContainer = query(document, settings.panelsContainer, "[data-panels]") // default: [data-panels]
-        this.panels = this.buildPanels(settings.panelSelector)
-        this.snapDefaults = settings.snapDefaults
+        this.panels = this.buildPanels(settings.panelSelector, settings.configPanels)
 
         // Initialization
         this.init()
@@ -26,7 +25,7 @@ export class ScrollSequence {
         return document.querySelector("[data-triggers]")
     }
     // Define sequence.panels and add panel and state triggers to DOM
-    buildPanels(panelSelector) {
+    buildPanels(panelSelector, config) {
         let panels = query(this.container, panelSelector, "[data-panel]", true) // default: [data-panel]
         let arr = []
 
@@ -34,6 +33,7 @@ export class ScrollSequence {
             arr.push({
                 name: panel.dataset.panel,
                 container: panel,
+                settings: config[panel.dataset.panel]
             })
 
             let str = `<div data-trigger="${panel.dataset.panel}" style="height: ${parseFloat(panel.dataset.height) * 100}vh; `
@@ -81,25 +81,16 @@ export class ScrollSequence {
         })
         // Create a master timeline and scrollTrigger for each panel
         this.panels.forEach(panel => {
+
             panel.master = gsap.timeline({
                 scrollTrigger: {
                     trigger: `[data-trigger="${panel.container.dataset.panel}"]`,
                     start: "top center",
                     end: "bottom center",
                     scrub: 1,
-                    // snap: calcSnap(panel.container.dataset.snap)
+                    snap: panel.settings.snap,
                 }
             })
-            function calcSnap(snap) {
-                if(snap) {
-                    return {
-                        // snapTo: "labels", // snap to the closest label in the timeline
-                        // duration: {min: 0.1, max: 0.4}, // the snap animation should be at least 0.2 seconds, but no more than 3 seconds (determined by velocity)
-                        // delay: 0.1, // wait 0.2 seconds from the last scroll event before doing the snapping
-                        // ease: "power1.inOut" // the ease of the snap animation ("power3" by default)
-                    }
-                }
-            }
         })
     }
     initDebug() {

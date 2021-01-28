@@ -67,14 +67,19 @@ const sequence = new ScrollSequence({
 
 Key | Type | Default | Description
 ------------ | ------------ | ------------ | ------------
+configPanels* | array of objects | undefined | used to manually override scrollTrigger values
+debug* | boolean or {r,g,b} | false | Turns debug mode off/on
+
+Additional Settings
+
+Key | Type | Default | Description
+------------ | ------------ | ------------ | ------------
 container | string | [data-sequence] | Selector for the sequence
 panelsContainer | string | [data-panels] | Selector of sequence panels to pin
 panelSelector | string | [data-panel] | Selector for panels
 stateSelector | string | [data-state] | Selector for states
 triggerContainer | string | [data-triggers] | Selector for triggers to be placed in
 sequencePadding | number | 0.5 | Defines space between the pinned trigger element and panels
-debug | boolean or {r,g,b} | false | Turns debug mode off/on
-
 
 ## 3: Define animations for each panel
 
