@@ -1,198 +1,82 @@
-document.addEventListener('DOMContentLoaded', () => {
+import {setDefault} from '../functions/setDefault.js'
 
+// 1: Take in default / configurations
+// 2: Build Trigger DOM elements
+// 3: Init triggers for each panel
 
-    class ScrollSequence {
-        constructor(settings) {
-            this.container = settings.container
-            this.triggerContainer = settings.triggerContainer
-            this.panelsContainer = settings.panelsContainer
-            this.panels = this.createPanels(settings.panels)
-            this.debug = settings.debug
-            this.init()
-        }
-        createPanels(panels) {
-            let arr = []
-            panels.forEach(panel => {
-                let obj = {
-                    container: panel,
-                    name: panel.dataset.panel,
-                    height: parseFloat(panel.dataset.height) * 100,
-                }
+export class ScrollSequence {
+    constructor(settings) {
+        // DOM Manipulation
+        this.container = document.querySelector(setDefault(settings.container, "[data-sequence]")) // default: [data-sequence]
+        this.triggerContainer = this.buildTriggerContainer(settings.SequencePadding) 
+        this.panelsContainer = document.querySelector(setDefault(settings.panelsContainer, "[data-panels]")) // default: [data-panels]
+        this.panels = this.buildPanels(settings.panelSelector, settings.configPanels)
 
-                // Add panel to trigger container
-                let str = `<div data-trigger`
-                if(obj.name) {str += `="${obj.name}"`}
-                str += ` class="border-t border-blue-500 p-4 text-blue-500 text-sm z-0"`
-                if(obj.height) {str += ` style="height: ${obj.height}vh"`}
-                str += `>${obj.name}</div>`
-                this.triggerContainer.innerHTML += str
+        // Initialization
+        this.init()
+    }
+    // Add Trigger Container to DOM
+    buildTriggerContainer(padding) {
+        if(!padding) {padding = "50"}
+        else {padding = parseFloat(padding) * 100}
+        this.container.innerHTML += `<!-- Trigger Container --><div data-triggers style="padding: ${padding}vh 0"></div>`
 
-                arr.push(obj)
+        return document.querySelector("[data-triggers]")
+    }
+    // Define sequence.panels and add panel and state triggers to DOM
+    buildPanels(panelSelector, config) {
+        let panels = this.container.querySelectorAll(setDefault(panelSelector, "[data-panel]")) // default: [data-panel]
+        let arr = []
 
+        panels.forEach((panel, i) => {
+            arr.push({
+                name: panel.dataset.panel,
+                container: panel,
+                settings: setDefault(config[panel.dataset.panel], {})
             })
 
-            return arr
-        }
-        init() {
-            if(this.debug) {this.initDebug()}
+            let str = `<div data-trigger="${panel.dataset.panel}" style="height: ${parseFloat(panel.dataset.height) * 100}vh;"></div>`
 
-            // Pin the sequence
-            gsap.registerPlugin(ScrollTrigger)
+            this.triggerContainer.innerHTML += str
+        })
 
-            ScrollTrigger.create({
-                trigger: "[data-sequence]",
+        return arr
+    }
+    init() {
+        // Pin the sequence container and create a master timeline and scrollTrigger
+        gsap.registerPlugin(ScrollTrigger)
+
+        this.master = gsap.timeline({
+            scrollTrigger: {
+                trigger: this.container,
                 start: "20px 20px",
                 end: "bottom bottom",
-                pin: "[data-panels]",
-                onEnter: () => {},
-                onEnterBack: () => {},
-                onUpdate: self => this.showSequenceProg.innerHTML = self.progress.toFixed(2),
+                pin: this.panelsContainer,
+                anticipatePin: 1,
                 pinSpacing: false,
                 markers: false,
-            })
-            
-        }
-        initDebug() {
-            this.panelsContainer.innerHTML += `
-                <div class="absolute top-0 flex flex-col justify-end w-full h-screen p-4 text-sm" style="background-color: rgba(166, 218, 255, 0.2); box-shadow: inset 0 0 0 1px #0059fe; color: #0059fe;">
-                    <div>
-                        <p>panel: <span id="sequence-current">undefined</span></p>
-                        <p>progression: <span id="panel-progress">0</span></p>
-                        <br />
-                        <p>sequence: ${this.container.dataset.sequence}</p>
-                        <p>progression: <span id="sequence-progress">0</span></p>
-                        <p>viewport: ${window.innerHeight}px</p>
-                        <p>height: ${this.container.offsetHeight}px</p>
-                        <p>hRatio: ${this.container.offsetHeight / window.innerHeight * 100}%</p>
-                    </div>
-                </div>
-            `
-            this.showSequenceProg = document.querySelector(`#sequence-progress`) 
-            this.showPanelProg = document.querySelector(`#panel-progress`)
-            this.showCurrentSeq = document.querySelector("#sequence-current")
+            }
+        })
 
-            ScrollTrigger.defaults({
-                toggleActions: "play pause resume reset",
-                markers: {startColor: "#0059fe", endColor: "#80adff", fontSize: "10px", indent: 10},
-                onEnter: self => this.showCurrentSeq.innerHTML = self.trigger.dataset.trigger,
-                onEnterBack: self => this.showCurrentSeq.innerHTML = self.trigger.dataset.trigger,
-                onUpdate: self => this.showPanelProg.innerHTML = self.progress.toFixed(2),
+        // Create a master timeline and scrollTrigger for each panel
+        this.panels.forEach(panel => {
+            console.log(panel.settings)
+
+            panel.master = gsap.timeline({
+                scrollTrigger: {
+                    trigger: `[data-trigger="${panel.container.dataset.panel}"]`,
+                    toggleActions: setDefault(panel.settings.toggleActions, "play pause resume reset"),
+                    start: setDefault(panel.settings.start, "top center"),
+                    end: setDefault(panel.settings.end, "bottom center"),
+                    scrub: setDefault(panel.settings.scrub, 1),
+                    snap: panel.settings.snap,
+                    onEnter: panel.settings.onEnter,
+                    onEnterBack: panel.settings.onEnterBack,
+                    onLeave: panel.settings.onLeave,
+                    onLeaveBack: panel.settings.onLeaveBack,
+                    onUpdate: panel.settings.onUpdate
+                }
             })
-        }
- 
+        })
     }
-
-
-    // Create sequence
-    const sequence = new ScrollSequence({
-        container: document.querySelector("[data-sequence]"),
-        triggerContainer: document.querySelector("[data-triggers]"),
-        panelsContainer: document.querySelector("[data-panels]"),
-        panels: document.querySelectorAll("[data-panel]"),
-        // paddingTop: 0.5
-        // paddingBottom: 0.5
-        debug: true,
-    })
-
-    // Create Panels
-    sequence.panels.forEach(panel => {
-
-        switch(panel.name) {
-
-            case "intro":
-            case "features":
-            case "buybox":
-
-                (() => {
-                    let master = gsap.timeline({
-                        scrollTrigger: {
-                            trigger: `[data-trigger="${panel.name}"]`,
-                            start: "top center",
-                            end: "bottom center",
-                            // end: () => {return `+=${panel.trigger.offsetHeight}`},
-                            scrub: true,
-                        }
-                    })
-                })()
-            
-                break
-
-            case "features-disabled":
-
-                (() => {
-
-                    let master = gsap.timeline({
-                        scrollTrigger: {
-                            trigger: panel.trigger,
-                            scrub: true,
-                            // snap: {
-                            //     snapTo: "labels",
-                            //     duration: {min: 0.2, max: 3},
-                            //     delay: 0.2,
-                            //     ease: "power1.inOut" 
-                            // },
-                        }
-                    })
-    
-                    // let states = panel.container.querySelectorAll("[data-state]")
-    
-                    // states.forEach(state => {
-                    //     let name = state.dataset.state
-                    //     master.addLabel(name)
-    
-                    //     function animateChair() {
-                    //         let tl = gsap.timeline()
-                    //         return tl
-                    //     }
-    
-                    //     master.add(animateChair())
-    
-                    // })
-    
-                    // console.log(master)
-
-                    // master.addLabel("first")
-                    //   .from(".box p", {scale: 0.3, rotation:45, autoAlpha: 0})
-    
-                    //   .addLabel("second")
-                    //   .from(".box", {backgroundColor: "#28a92b"})
-    
-                    //   .addLabel("third")
-    
-                    //   .to(".box", {rotation: 360})
-                    //   .addLabel("fourth");
-                })()
-
-                break
-
-            default:
-                console.log(`Panel not found: switch value "${panel.name}" does not match an existing data-panel value`)
-        }
-    })
-  
-
-
-    // // Master timeline for each panel
-    // sequence.panels.forEach(panel => {
-    //     switch(panel.name) {
-    //         case "myPanel":
-    //             // Define master timeline
-    //             let master = new TimelineMax({paused: true})
-
-    //             gsap.registerPlugin(ScrollTrigger)
-
-    //             ScrollTrigger.create({
-    //                 trigger: panel.trigger,
-    //                 start: "top",
-    //                 end: "bottom",
-    //                 toggleActions: "play pause resume reset",
-    //                 animation: master,    
-    //                 onEnter: () => console.log(panel),
-    //                 markers: true,
-    //             })
-    //             break
-    //         default:
-    //             console.log("Error: panel.name not found")
-    //     }
-    // })
-})
+}

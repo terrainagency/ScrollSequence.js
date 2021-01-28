@@ -1,54 +1,50 @@
-import {query} from '../functions/query.js'
+import {setDefault} from '../functions/setDefault.js'
+
+// 1: Take in default / configurations
+// 2: Build Trigger DOM elements
+// 3: Init triggers for each panel
 
 export class ScrollSequence {
     constructor(settings) {
         // DOM Manipulation
         this.debug = this.configDebug(settings.debug)
-        this.container = query(document, settings.container, "[data-sequence]") // default: [data-sequence]
+        this.container = document.querySelector(setDefault(settings.container, "[data-sequence]")) // default: [data-sequence]
         this.triggerContainer = this.buildTriggerContainer(settings.SequencePadding) 
-        this.panelsContainer = query(document, settings.panelsContainer, "[data-panels]") // default: [data-panels]
-        this.panels = this.buildPanels(settings.panelSelector, settings.stateSelector)
+        this.panelsContainer = document.querySelector(setDefault(settings.panelsContainer, "[data-panels]")) // default: [data-panels]
+        this.panels = this.buildPanels(settings.panelSelector, settings.configPanels)
 
         // Initialization
         this.init()
     }
     // Add Trigger Container to DOM
     buildTriggerContainer(padding) {
-        if(!padding) {padding = "50"}
-        else {padding = parseFloat(padding) * 100}
-        this.container.innerHTML += `<!-- Trigger Container --><div data-triggers style="padding: ${padding}vh 0"></div>`
+        if(!padding) {padding = "50vh"}
+        this.container.innerHTML += `<!-- Trigger Container --><div data-triggers style="padding: ${padding} 0"></div>`
 
         return document.querySelector("[data-triggers]")
     }
     // Define sequence.panels and add panel and state triggers to DOM
-    buildPanels(panelSelector, stateSelector) {
-        let panelsArr = query(this.container, panelSelector, "[data-panel]", true) // default: [data-panel]
+    buildPanels(panelSelector, config) {
+        let panels = this.container.querySelectorAll(setDefault(panelSelector, "[data-panel]")) // default: [data-panel]
         let arr = []
 
-        panelsArr.forEach((panel, i) => {
-            let obj = {
-                container: panel,
+        panels.forEach((panel, i) => {
+            arr.push({
                 name: panel.dataset.panel,
-                height: parseFloat(panel.dataset.height) * 100,
-                snap: panel.dataset.snap,
-                states: query(panel, stateSelector, "[data-state]", true) // default: [data-state]
-            }
+                container: panel,
+                settings: setDefault(config[panel.dataset.panel], {})
+            })
 
-            // Build trigger element string
-            let str = `<div data-trigger="${obj.name}"`
-            if(this.debug){
-                str += ` style="background-color: ${this.debug.bg}; padding: 1rem; color: ${this.debug.primary}; font-size: .875rem; line-height: 1.25rem; height: ${obj.height}vh; border-top: 1px solid ${this.debug.primary};`
-                if(i === panelsArr.length - 1) {str += `border-bottom: 1px solid ${this.debug.primary};`}
+            let str = `<div data-trigger="${panel.dataset.panel}" style="height: ${parseFloat(panel.dataset.height) * 100}vh; `
+            if(this.debug) {
+                str += `background-color: ${this.debug.bg}; padding: 1rem; color: ${this.debug.primary}; font-size: 0.875rem; line-height: 1.25rem; border-top: 1px solid ${this.debug.primary}; `
+                if(i === arr.length - 1) {str += `border-bottom: 1px solid ${this.debug.primary};`}
             }
-            else {str += ` style="height: ${obj.height}vh"`}
             str += `">`
-            if(this.debug){str += `${obj.name}`}
+            if(this.debug){str += `${panel.dataset.panel}`}
             str += `</div>`
 
-            // Add a new trigger element to triggers
             this.triggerContainer.innerHTML += str
-
-            arr.push(obj)
         })
 
         return arr
@@ -72,36 +68,32 @@ export class ScrollSequence {
                 start: "20px 20px",
                 end: "bottom bottom",
                 pin: this.panelsContainer,
-                onEnter: () => {},
-                onEnterBack: () => {},
-                onLeave: () => {},
-                onEnterBack: () => {},
+                anticipatePin: 1,
                 onUpdate: self => {if(this.debug){this.showSequenceProg.innerHTML = self.progress.toFixed(2)}},
                 pinSpacing: false,
                 markers: false,
             }
         })
+
         // Create a master timeline and scrollTrigger for each panel
         this.panels.forEach(panel => {
+            console.log(panel.settings)
+
             panel.master = gsap.timeline({
                 scrollTrigger: {
-                    trigger: `[data-trigger="${panel.name}"]`,
-                    start: "top center",
-                    end: "bottom center",
-                    scrub: true,
-                    // snap: calcSnap(panel.states.length),
+                    trigger: `[data-trigger="${panel.container.dataset.panel}"]`,
+                    toggleActions: setDefault(panel.settings.toggleActions, "play pause resume reset"),
+                    start: setDefault(panel.settings.start, "top center"),
+                    end: setDefault(panel.settings.end, "bottom center"),
+                    scrub: setDefault(panel.settings.scrub, 1),
+                    snap: panel.settings.snap,
+                    onEnter: setDefault(panel.settings.onEnter, this.debugEnter),
+                    onEnterBack: setDefault(panel.settings.onEnterBack, this.debugEnter),
+                    onLeave: setDefault(panel.settings.onLeave, this.debugLeave),
+                    onLeaveBack: setDefault(panel.settings.onLeaveBack, this.debugLeave),
+                    onUpdate: setDefault(panel.settings.onUpdate, this.debugUpdate)
                 }
             })
-            // function calcSnap(i) {
-            //     if(panel.states.length > 0) {
-            //         return {
-
-            //             duration: {min: 0.2, max: 3},
-            //             delay: 0.2,
-            //             ease: "power1.inOut"
-            //         }
-            //     }
-            // }
         })
     }
     initDebug() {
@@ -124,28 +116,19 @@ export class ScrollSequence {
         this.showPanelHeight = document.querySelector("#debug-panel-height")
         this.showCurrentSeq = document.querySelector("#debug-sequence-current")
 
+        this.debugEnter = (self) => {
+            this.showCurrentSeq.innerHTML = self.trigger.dataset.trigger
+            this.showPanelHeight.innerHTML = self.trigger.offsetHeight / window.innerHeight * 100 + "vh"
+        }
+        this.debugLeave = () => {
+            this.showCurrentSeq.innerHTML = undefined
+            this.showPanelProg.innerHTML = undefined
+            this.showPanelHeight.innerHTML = undefined
+        }
+        this.debugUpdate = (self) => this.showPanelProg.innerHTML = self.progress.toFixed(2)
+
         ScrollTrigger.defaults({
-            toggleActions: "play pause resume reset",
             markers: {startColor: this.debug.primary, endColor: this.debug.secondary, fontSize: "10px", indent: 10},
-            onEnter: self => {
-                this.showCurrentSeq.innerHTML = self.trigger.dataset.trigger
-                this.showPanelHeight.innerHTML = self.trigger.offsetHeight / window.innerHeight * 100 + "vh"
-            },
-            onEnterBack: self => {
-                this.showCurrentSeq.innerHTML = self.trigger.dataset.trigger
-                this.showPanelHeight.innerHTML = self.trigger.offsetHeight / window.innerHeight * 100 + "vh"
-            },
-            onLeave: () => {
-                this.showCurrentSeq.innerHTML = undefined
-                this.showPanelProg.innerHTML = undefined
-                this.showPanelHeight.innerHTML = undefined
-            },
-            onLeaveBack: () => {
-                this.showCurrentSeq.innerHTML = undefined
-                this.showPanelProg.innerHTML = undefined
-                this.showPanelHeight.innerHTML = undefined
-            },
-            onUpdate: self => this.showPanelProg.innerHTML = self.progress.toFixed(2),
         })
 
         console.log(this)
