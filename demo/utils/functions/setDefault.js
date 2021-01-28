@@ -1,4 +1,4 @@
-export function setDefault(value, def) {
-    if(value) {return value}
-    return def
+export function setDefault(a, b) {
+    if(a) {return a}
+    return b
 }

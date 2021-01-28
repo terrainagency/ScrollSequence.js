@@ -34,14 +34,29 @@ import {ScrollSequence} from './utils.js'
 
 ## 2: Create a new ScrollSequence
 
-Most of the time, creating a new ScrollSequence will look like the example below. `example1` is using default settings, while adding custom configurations for `mySnapPanel`. 
+For basic scenarios, creating a new ScrollSequence will likely look like the `example1` below. 
 
 ```javascript
-const example1 = new ScrollSequence({
-    debug: true,
+const example1 = new ScrollSequence("#FirstSequence", {debug: true})
+```
 
-    // 3. Configure any unique panel settings
-    configPanels: {
+Key | Type | Default | Description
+------------ | ------------ | ------------ | ------------
+config | object | {} | Object to pass custom options for panels
+panelsContainer | string | [data-panels] | Selector of sequence panels to pin
+panelSelector | string | [data-panel] | Selector for panels
+triggerContainer | string | [data-triggers] | Selector for triggers to be placed in
+sequencePadding | number | 0.5 | Defines space between the pinned trigger element and panels
+debug | boolean or {r,g,b} | false | Turns debug mode off/on
+
+When custom configurations for a specific panel's scrollTrigger are needed, pass the config object. In `example2` below, customized properties were attached to `mySnapPanel`. 
+
+```javascript
+// 1. Create sequence from selector #FirstSequence as container
+const example2 = new ScrollSequence("#FirstSequence", {
+
+    // 2. Configure any unique panel settings
+    config: {
 
         // NOTE: Must match the associated [data-panel] value
         mySnapPanel: {
@@ -52,11 +67,14 @@ const example1 = new ScrollSequence({
                 ease: "power1.inOut" 
             }
         }
-    }
+    },
+
+    // 3. Turn on debug?
+    debug: true,
 })
 ```
 
-Custom panel configurations all match existing scrollTrigger settings.
+Config options:
 
 Key | Default
 ------------ | ------------ 
@@ -71,18 +89,6 @@ onLeaveBack* | undefined
 onUpdate* | undefined
 
 > *If `debug: true`, the default for these properties will be replaced with debug display methods.
-
-Additional Settings
-
-Key | Type | Default | Description
------------- | ------------ | ------------ | ------------
-container | string | [data-sequence] | Selector for the sequence
-panelsContainer | string | [data-panels] | Selector of sequence panels to pin
-panelSelector | string | [data-panel] | Selector for panels
-stateSelector | string | [data-state] | Selector for states
-triggerContainer | string | [data-triggers] | Selector for triggers to be placed in
-sequencePadding | number | 0.5 | Defines space between the pinned trigger element and panels
-debug | boolean or {r,g,b} | false | Turns debug mode off/on
 
 ## 3: Define architecture for panel timelines
 
@@ -161,13 +167,12 @@ v0.1:
 - [ ] Add support for media queries
 - [x] Allow users to set their own default color for debug
 - [x] Set defaults for container and panel queries
+- [x] Allow for multiple ScrollSequences on a single page
 
 v1.0:
 
 - [ ] Create a webpack dev environment for Ghost repositories
 - [ ] Update branding for Ghost repositories
-- [ ] Consider spliting this.init() into this.build() and this.init()
-- [ ] Allow for multiple ScrollSequences on a single page
 
 ## License
 
