@@ -22,33 +22,19 @@ export class ScrollSequence {
     }
     // Define sequence.panels and add panel and state triggers to DOM
     buildPanels(panelSelector, stateSelector) {
-        let panelsArr = query(this.container, panelSelector, "[data-panel]", true) // default: [data-panel]
-        let arr = []
+        let arr = query(this.container, panelSelector, "[data-panel]", true) // default: [data-panel]
 
-        panelsArr.forEach((panel, i) => {
-            let obj = {
-                container: panel,
-                name: panel.dataset.panel,
-                height: parseFloat(panel.dataset.height) * 100,
-                snap: panel.dataset.snap,
-                states: query(panel, stateSelector, "[data-state]", true) // default: [data-state]
+        arr.forEach((panel, i) => {
+            let str = `<div data-trigger="${panel.dataset.panel}" style="height: ${parseFloat(panel.dataset.height) * 100}vh; `
+            if(this.debug) {
+                str += `background-color: ${this.debug.bg}; padding: 1rem; color: ${this.debug.primary}; font-size: 0.875rem; line-height: 1.25rem; border-top: 1px solid ${this.debug.primary}; `
+                if(i === arr.length - 1) {str += `border-bottom: 1px solid ${this.debug.primary};`}
             }
-
-            // Build trigger element string
-            let str = `<div data-trigger="${obj.name}"`
-            if(this.debug){
-                str += ` style="background-color: ${this.debug.bg}; padding: 1rem; color: ${this.debug.primary}; font-size: .875rem; line-height: 1.25rem; height: ${obj.height}vh; border-top: 1px solid ${this.debug.primary};`
-                if(i === panelsArr.length - 1) {str += `border-bottom: 1px solid ${this.debug.primary};`}
-            }
-            else {str += ` style="height: ${obj.height}vh"`}
             str += `">`
-            if(this.debug){str += `${obj.name}`}
+            if(this.debug){str += `${panel.dataset.panel}`}
             str += `</div>`
 
-            // Add a new trigger element to triggers
             this.triggerContainer.innerHTML += str
-
-            arr.push(obj)
         })
 
         return arr
@@ -85,7 +71,7 @@ export class ScrollSequence {
         this.panels.forEach(panel => {
             panel.master = gsap.timeline({
                 scrollTrigger: {
-                    trigger: `[data-trigger="${panel.name}"]`,
+                    trigger: `[data-trigger="${panel.dataset.panel}"]`,
                     start: "top center",
                     end: "bottom center",
                     scrub: true,
