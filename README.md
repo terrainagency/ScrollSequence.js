@@ -6,7 +6,7 @@ Demo: https://terrainagency.com/ghost/objects/scrollsequence/demo
 
 ## Usage
 
-ScrollSequence is a <1kb (minified) object that creates a pinned sequence of panels. Each panels contains a master timelines with a scrollTrigger instance. 
+ScrollSequence is a <2kb (minified) component that creates a pinned sequence of panels. Each panels contains a master timelines with a scrollTrigger instance. 
 
 The goal of ScrollSequence is to create an efficient workflow for building scroll based pages by advocating for separation of concern through restricting content to HTML, and animation to javascript. 
 
@@ -69,8 +69,8 @@ If you need to configure custom options:
 const sequence = new ScrollSequence({
     container: "[data-sequence]",
     panelsContainer: "[data-panels]", 
-    panels: "[data-panel]", 
-    states: "[data-state]", 
+    panelSelector: "[data-panel]", 
+    stateSelector: "[data-state]", 
     triggerContainer: "[data-triggers]",
     sequencePadding: 0.5,
     debug: true 
@@ -81,8 +81,8 @@ Key | Type | Default | Description
 ------------ | ------------ | ------------ | ------------
 container | string | [data-sequence] | Selector for the sequence
 panelsContainer | string | [data-panels] | Selector of sequence panels to pin
-panels | string | [data-panel] | Selector for panels
-states | string | [data-state] | Selector for states
+panelSelector | string | [data-panel] | Selector for panels
+stateSelector | string | [data-state] | Selector for states
 triggerContainer | string | [data-triggers] | Selector for triggers to be placed in
 sequencePadding | number | 0.5 | Defines space between the pinned trigger element and panels
 debug | boolean or {r,g,b} | false | Turns debug mode off/on
@@ -193,19 +193,23 @@ ScrollSequence.js is a part of Terrain's Ghost library, and is currently in deve
 
 Ghost's code is non-obtrusive, and does not create any actions without your direction. It is designed to be as agnostic as possible, allowing it to function freely accross a large variety of applications.
 
+To Do:
+
 - [x] Basic architecture 
 - [x] Integrate base panel ScrollTriggers
 - [x] Add padding parameter to sequence object with a default
-- [ ] Allow panels to snap to tl labels
+- [x] Add states to panels
 - [x] Switch all debug css to inline styles
 - [ ] Update on browser resize
 - [ ] Add support for media queries
-- [ ] Allow users to set their own scrollTrigger defaults
 - [x] Allow users to set their own default color for debug
 - [x] Set defaults for container and panel queries
+
+Polish:
+
 - [ ] Create a webpack dev environment for Ghost repositories
 - [ ] Update branding for Ghost repositories
-- [ ] Consider spliting this.init() into this.init() and this.run()
+- [ ] Consider spliting this.init() into this.build() and this.init()
 - [ ] Allow for multiple ScrollSequences on a single page
   
 # Known issues
