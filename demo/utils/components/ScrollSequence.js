@@ -1,17 +1,18 @@
 import {setDefault} from '../functions/setDefault.js'
 
-// 1: Take in default / configurations
-// 2: Build Trigger DOM elements
-// 3: Init triggers for each panel
+// 1: Take in configurations
+// 2: Configurations vs defaults
+// 3: Build DOM elements
+// 4: Init
 
 export class ScrollSequence {
-    constructor(settings) {
+    constructor(el, settings) {
         // DOM Manipulation
         this.debug = this.configDebug(settings.debug)
-        this.container = document.querySelector(setDefault(settings.container, "[data-sequence]")) // default: [data-sequence]
+        this.container = document.querySelector(el)
         this.triggerContainer = this.buildTriggerContainer(settings.SequencePadding) 
-        this.panelsContainer = document.querySelector(setDefault(settings.panelsContainer, "[data-panels]")) // default: [data-panels]
-        this.panels = this.buildPanels(settings.panelSelector, settings.configPanels)
+        this.panelsContainerSelector = settings.panelsContainer
+        this.panels = this.buildPanels(settings.panelSelector, setDefault(settings.configPanels, {}))
 
         // Initialization
         this.init()
@@ -21,9 +22,9 @@ export class ScrollSequence {
         if(!padding) {padding = "50vh"}
         this.container.innerHTML += `<!-- Trigger Container --><div data-triggers style="padding: ${padding} 0"></div>`
 
-        return document.querySelector("[data-triggers]")
+        return this.container.querySelector("[data-triggers]")
     }
-    // Define sequence.panels and add panel and state triggers to DOM
+    // Define sequence.panels and add panel
     buildPanels(panelSelector, config) {
         let panels = this.container.querySelectorAll(setDefault(panelSelector, "[data-panel]")) // default: [data-panel]
         let arr = []
@@ -57,6 +58,8 @@ export class ScrollSequence {
         return debug
     }
     init() {
+        this.panelsContainer = this.container.querySelector(setDefault(this.panelsContainerSelector, "[data-panels]"))
+
         if(this.debug) {this.initDebug()}
 
         // Pin the sequence container and create a master timeline and scrollTrigger
@@ -77,11 +80,9 @@ export class ScrollSequence {
 
         // Create a master timeline and scrollTrigger for each panel
         this.panels.forEach(panel => {
-            console.log(panel.settings)
-
             panel.master = gsap.timeline({
                 scrollTrigger: {
-                    trigger: `[data-trigger="${panel.container.dataset.panel}"]`,
+                    trigger: this.container.querySelector(`[data-trigger="${panel.container.dataset.panel}"]`),
                     toggleActions: setDefault(panel.settings.toggleActions, "play pause resume reset"),
                     start: setDefault(panel.settings.start, "top center"),
                     end: setDefault(panel.settings.end, "bottom center"),
@@ -100,21 +101,22 @@ export class ScrollSequence {
         this.panelsContainer.innerHTML += `
             <div style="position: absolute; width: 100%; height: 100vh; padding: 1rem; font-size: .875rem; line-height: 1.25rem; background-color: ${this.debug.bg}; box-shadow: inset 0 0 0 1px ${this.debug.primary}; color: ${this.debug.primary};">
                 <div>
-                    <p>panel: <span id="debug-sequence-current">undefined</span></p>
-                    <p>progression: <span id="debug-panel-progress">undefined</span></p>
-                    <p>length: <span id="debug-panel-height">undefined</span></p>
+                    <p>panel: <span id="${this.container.id}-debug-panel">undefined</span></p>
+                    <p>progression: <span id="${this.container.id}-debug-panel-prog">undefined</span></p>
+                    <p>length: <span id="${this.container.id}-debug-length">undefined</span></p>
                     <br />
-                    <p>sequence: ${this.container.dataset.sequence}</p>
-                    <p>progression: <span id="debug-sequence-progress">0</span></p>
+                    <p>sequence: ${this.container.id}</p>
+                    <p>progression: <span id="${this.container.id}-debug-sequence-prog">0</span></p>
                     <p>viewport: ${window.innerHeight}px</p>
-                    <p>length: ${this.container.offsetHeight / window.innerHeight * 100}vh</p>
+                    <p>length: ${Math.ceil(this.container.offsetHeight / window.innerHeight * 100)}vh</p>
                 </div>
             </div>
         `
-        this.showSequenceProg = document.querySelector("#debug-sequence-progress") 
-        this.showPanelProg = document.querySelector("#debug-panel-progress")
-        this.showPanelHeight = document.querySelector("#debug-panel-height")
-        this.showCurrentSeq = document.querySelector("#debug-sequence-current")
+
+        this.showSequenceProg = this.panelsContainer.querySelector(`#${this.container.id}-debug-sequence-prog`) 
+        this.showPanelProg = this.panelsContainer.querySelector(`#${this.container.id}-debug-panel-prog`)
+        this.showPanelHeight = this.panelsContainer.querySelector(`#${this.container.id}-debug-length`)
+        this.showCurrentSeq = this.panelsContainer.querySelector(`#${this.container.id}-debug-panel`)
 
         this.debugEnter = (self) => {
             this.showCurrentSeq.innerHTML = self.trigger.dataset.trigger

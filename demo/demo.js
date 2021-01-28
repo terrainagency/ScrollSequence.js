@@ -3,13 +3,13 @@ import {ScrollSequence} from './utils/components/ScrollSequence.js'
 document.addEventListener('DOMContentLoaded', () => {
 
     // 1. Create a new ScrollSequence
-    const sequence = new ScrollSequence({
+    const sequence = new ScrollSequence("#FirstSequence", {
 
         // 2. Configure sequence settings
-        debug: true,
 
         // 3. Configure any unique panel settings
-        configPanels: {
+        config: {
+
             // NOTE: Must match the associated [data-panel] value
             SnapSlider: {
                 snap: {
@@ -19,7 +19,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     ease: "power1.inOut" 
                 }
             }
-        }
+        },
+
+        // 4. Turn on debug?
+        debug: true,
     })
 
     // 3. Define animations for each panel
