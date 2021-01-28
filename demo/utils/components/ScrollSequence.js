@@ -1,5 +1,3 @@
-import {setDefault} from '../functions/setDefault.js'
-
 // 1: Take in configurations
 // 2: Configurations vs defaults
 // 3: Build DOM elements
@@ -12,7 +10,7 @@ export class ScrollSequence {
         this.container = document.querySelector(el)
         this.triggerContainer = this.buildTriggerContainer(settings.SequencePadding) 
         this.panelsContainerSelector = settings.panelsContainer
-        this.panels = this.buildPanels(settings.panelSelector, setDefault(settings.configPanels, {}))
+        this.panels = this.buildPanels(settings.panelSelector, settings.config ? settings.config : {})
 
         // Initialization
         this.init()
@@ -26,14 +24,14 @@ export class ScrollSequence {
     }
     // Define sequence.panels and add panel
     buildPanels(panelSelector, config) {
-        let panels = this.container.querySelectorAll(setDefault(panelSelector, "[data-panel]")) // default: [data-panel]
+        let panels = this.container.querySelectorAll(panelSelector ? panelSelector : "[data-panel]") // default: [data-panel]
         let arr = []
 
         panels.forEach((panel, i) => {
             arr.push({
                 name: panel.dataset.panel,
                 container: panel,
-                settings: setDefault(config[panel.dataset.panel], {})
+                settings: config[panel.dataset.panel] ? config[panel.dataset.panel] : {}
             })
 
             let str = `<div data-trigger="${panel.dataset.panel}" style="height: ${parseFloat(panel.dataset.height) * 100}vh; `
@@ -58,7 +56,7 @@ export class ScrollSequence {
         return debug
     }
     init() {
-        this.panelsContainer = this.container.querySelector(setDefault(this.panelsContainerSelector, "[data-panels]"))
+        this.panelsContainer = this.container.querySelector(this.panelsContainerSelector ? this.panelsContainerSelector : "[data-panels]")
 
         if(this.debug) {this.initDebug()}
 
@@ -80,19 +78,20 @@ export class ScrollSequence {
 
         // Create a master timeline and scrollTrigger for each panel
         this.panels.forEach(panel => {
+            console.log(panel.settings)
             panel.master = gsap.timeline({
                 scrollTrigger: {
                     trigger: this.container.querySelector(`[data-trigger="${panel.container.dataset.panel}"]`),
-                    toggleActions: setDefault(panel.settings.toggleActions, "play pause resume reset"),
-                    start: setDefault(panel.settings.start, "top center"),
-                    end: setDefault(panel.settings.end, "bottom center"),
-                    scrub: setDefault(panel.settings.scrub, 1),
+                    toggleActions: panel.settings.toggleActions ? panel.settings.toggleActions : "play pause resume reset",
+                    start: panel.settings.start ? panel.settings.start : "top center",
+                    end: panel.settings.end ? panel.settings.end : "bottom center",
+                    scrub: panel.settings.scrub ? panel.settings.scrub : 1,
                     snap: panel.settings.snap,
-                    onEnter: setDefault(panel.settings.onEnter, this.debugEnter),
-                    onEnterBack: setDefault(panel.settings.onEnterBack, this.debugEnter),
-                    onLeave: setDefault(panel.settings.onLeave, this.debugLeave),
-                    onLeaveBack: setDefault(panel.settings.onLeaveBack, this.debugLeave),
-                    onUpdate: setDefault(panel.settings.onUpdate, this.debugUpdate)
+                    onEnter: panel.settings.onEnter ? panel.settings.onEnter : this.debugEnter,
+                    onEnterBack: panel.settings.onEnterBack ? panel.settings.onEnterBack : this.debugEnter,
+                    onLeave: panel.settings.onLeave ? panel.settings.onLeave : this.debugLeave,
+                    onLeaveBack: panel.settings.onLeaveBack ? panel.settings.onLeaveBack : this.debugLeave,
+                    onUpdate: panel.settings.onUpdate ? panel.settings.onUpdate : this.debugUpdate
                 }
             })
         })
@@ -123,9 +122,9 @@ export class ScrollSequence {
             this.showPanelHeight.innerHTML = self.trigger.offsetHeight / window.innerHeight * 100 + "vh"
         }
         this.debugLeave = () => {
-            this.showCurrentSeq.innerHTML = undefined
-            this.showPanelProg.innerHTML = undefined
-            this.showPanelHeight.innerHTML = undefined
+            this.showCurrentSeq.innerHTML = " "
+            this.showPanelProg.innerHTML = " "
+            this.showPanelHeight.innerHTML = " "
         }
         this.debugUpdate = (self) => this.showPanelProg.innerHTML = self.progress.toFixed(2)
 

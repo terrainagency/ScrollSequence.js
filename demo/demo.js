@@ -2,6 +2,7 @@ import {ScrollSequence} from './utils/components/ScrollSequence.js'
 
 document.addEventListener('DOMContentLoaded', () => {
 
+
     // 1. Create a new ScrollSequence
     const sequence = new ScrollSequence("#FirstSequence", {
 
@@ -44,13 +45,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 (() => {
 
-                    panel.master.addLabel("start") // start
+                        // var topScroll = window.innerWidth < 737 ? 50 : 100;
 
-                    panel.master.to("#rect", {rotate: 45})
-                    panel.master.addLabel("intro")
-                    panel.master.to("#rect", {backgroundColor: "#0059FE", rotate: 0})
+                        panel.master.addLabel("start") // start
 
-                    panel.master.addLabel("end") // end
+                        panel.master.to("#rect", {rotate: 45})
+                        panel.master.addLabel("intro")
+                        panel.master.to("#rect", {backgroundColor: "#0059FE", rotate: 0})
+    
+                        panel.master.addLabel("end") // end
 
                 })()
 

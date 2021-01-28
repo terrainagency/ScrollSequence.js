@@ -163,8 +163,6 @@ v0.1:
 - [x] Add states to panels
 - [x] Switch all debug css to inline styles
 - [x] Add support for setting snap defaults
-- [ ] Update on browser resize
-- [ ] Add support for media queries
 - [x] Allow users to set their own default color for debug
 - [x] Set defaults for container and panel queries
 - [x] Allow for multiple ScrollSequences on a single page
