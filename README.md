@@ -21,22 +21,10 @@ import {ScrollSequence} from './utils.js'
 <!-- ScrollSequence container -->
 <div data-sequence="genesis" class="relative w-screen min-h-screen">
     <div data-panels class="absolute w-screen h-screen">
-        <section data-panel="myFirstPanel" data-height="2" class="">
+        <section data-panel="myFirstPanel" data-height="2" class="absolute w-screen h-screen">
 
             <!-- Content for myFirstPanel -->
 
-        </section>
-        <section data-panel="mySecondPanel" data-height="4" class="">
-            <div data-state="myFirstState">
-
-                <!-- Content for myFirstState of mySecondPanel -->
-
-            </div>
-            <div data-state="mySecondState">
-
-                <!-- Content for mySecondState of mySecondPanel -->
-
-            </div>
         </section>
     </div>
 </div>
@@ -138,6 +126,34 @@ sequence.panels.forEach(panel => {
 
 > The above is only an example of how to work with ScrollSequence.js, it can always be configured to suit your needs.
 
+## Snapping
+
+Enable snapping by adding `data-snap="true"` to the panel. In order for snapping to function properly, you must define lables within your `panel.master` animation. 
+
+```html
+    <section data-panel="SnapExample" data-height="2" data-snap="true" class="absolute w-screen h-screen">
+        <div class="flex flex-col w-full h-full justify-center items-center">
+            <div id="rect" class="inline-block w-10 h-10 bg-black"></div>
+        </div>
+    </section>
+```
+
+```javascript
+case "SnapExample":
+    
+    (() => {
+        panel.master.addLabel("start")
+        panel.master.to("#rect", {rotate: 45})
+        panel.master.addLabel("intro")
+        panel.master.to("#rect", {backgroundColor: "#f0f", rotate: 0})
+        panel.master.addLabel("end")
+    })()
+
+    break
+```
+
+> NOTE: Mark sure to add a label to the start and end of the `panel.master` timeline.
+
 ## Advanced Example
 
 ```javascript
@@ -200,6 +216,7 @@ To Do:
 - [x] Add padding parameter to sequence object with a default
 - [x] Add states to panels
 - [x] Switch all debug css to inline styles
+- [ ] Add support for setting snap defaults
 - [ ] Update on browser resize
 - [ ] Add support for media queries
 - [x] Allow users to set their own default color for debug
