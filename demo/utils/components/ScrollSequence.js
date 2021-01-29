@@ -8,7 +8,7 @@ export class ScrollSequence {
         // DOM Manipulation
         this.debug = this.configDebug(settings.debug)
         this.container = document.querySelector(el)
-        this.triggerContainer = this.buildTriggerContainer(settings.SequencePadding) 
+        this.triggerContainer = this.buildTriggerContainer(settings.paddingTop, settings.paddingBottom) 
         this.panelsContainerSelector = settings.panelsContainer
         this.panels = this.buildPanels(settings.panelSelector, settings.config ? settings.config : {})
 
@@ -16,9 +16,12 @@ export class ScrollSequence {
         this.init()
     }
     // Add Trigger Container to DOM
-    buildTriggerContainer(padding) {
-        if(!padding) {padding = "50vh"}
-        this.container.innerHTML += `<!-- Trigger Container --><div data-triggers style="padding: ${padding} 0"></div>`
+    buildTriggerContainer(paddingTop, paddingBottom) {
+        let pt = paddingTop ? paddingTop : "50vh"
+        let pb = paddingBottom ? paddingBottom : "50vh"
+
+        // if(!padding) {padding = "50vh"}
+        this.container.innerHTML += `<!-- Trigger Container --><div data-triggers style="padding-top: ${pt};  padding-bottom: ${pb};"></div>`
 
         return this.container.querySelector("[data-triggers]")
     }
@@ -51,7 +54,7 @@ export class ScrollSequence {
     configDebug(debug) {
         if(debug === true) {debug = {primary: "#0059FE", secondary: "#F7B603", bg: "rgba(166,218,255,0.25)"}} 
         else if(typeof debug === 'object') {
-            debug = {primary: `rgb(${debug.r},${debug.g},${debug.b})`, secondary: `rgba(${debug.r},${debug.g},${debug.b},0.25)`, bg: `rgba(${debug.r},${debug.g},${debug.b},0.25)`}
+            debug = {primary: `rgb(${debug.r},${debug.g},${debug.b})`, secondary: `rgba(${debug.r},${debug.g},${debug.b},0.25)`, bg: `rgba(${debug.r},${debug.g},${debug.b},${debug.a})`}
         }
         return debug
     }

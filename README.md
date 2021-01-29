@@ -166,9 +166,11 @@ v0.1:
 - [x] Allow users to set their own default color for debug
 - [x] Set defaults for container and panel queries
 - [x] Allow for multiple ScrollSequences on a single page
+- [x] Add support for top and bottom padding
 
 v1.0:
 
+- [ ] Enable lazy loading
 - [ ] Create a webpack dev environment for Ghost repositories
 - [ ] Update branding for Ghost repositories
 
