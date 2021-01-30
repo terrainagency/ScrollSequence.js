@@ -170,6 +170,8 @@ v0.1:
 
 v1.0:
 
+- [ ] Add scale parameter for trigger heights
+- [ ] Add padding to top/bottom of trigger
 - [ ] Enable lazy loading
 - [ ] Create a webpack dev environment for Ghost repositories
 - [ ] Update branding for Ghost repositories
