@@ -116,7 +116,41 @@ sequence.panels.forEach(panel => {
 }
 ```
 
-## Ex: Snapping
+## Advanced Useage
+
+ScrollSequence is at it's best when each content block in the DOM has a singular distinctive panel. Using `marginTop` and `marginBottom`, you can easily define an enter and leave animation. 
+
+Setting up defaults before initializing ScrollSequence instances can be useful if there are multiple ScrollSequences on a page.
+
+```javascript
+// 1. Default settings can be set before and passed when initializing ScrollSequence
+let snap = {
+    snapTo: "labels", 
+    duration: {min: 0.1, max: 0.4}, 
+    delay: 0.2, 
+    ease: "power1.inOut" 
+}
+let debug = {
+    primary: {r: 233, g: 0, b: 0},
+    opacity: 0.1,
+    position: "top left"
+}
+
+// 2. Create a new ScrollSequence
+const sequence = new ScrollSequence("#id", {
+    paddingTop: "100vh", 
+    settings: {
+
+        // 3. Configure unique settings for the Features panel
+        Features: {
+            snap: snap,
+            marginTop: "50vh",
+            marginBottom: "50vh"
+        },
+    },
+    debug: debug
+})
+```
 
 Enable snapping by adding a `snap: {}` object to the panel settings. Panels can only contain `scrub` or `snap`, they will not function with both.
 
