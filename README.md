@@ -6,7 +6,7 @@ Demo: https://terrainagency.com/ghost/objects/scrollsequence/demo
 
 ## Usage
 
-ScrollSequence is a <2kb (minified) component that creates a pinned sequence of panels. Each panels contains a master timelines with a scrollTrigger instance. 
+ScrollSequence is a <3kb (minified) component that creates a pinned sequence of panels. Each panels contains a master timelines with a scrollTrigger instance. 
 
 The goal of ScrollSequence is to create an efficient workflow for building scroll based pages by advocating for separation of concern through restricting content to HTML, and animation to javascript. 
 
