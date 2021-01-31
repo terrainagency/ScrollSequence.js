@@ -4,7 +4,7 @@
 
 # ScrollSequence.js
 
-Dependencies: GSAP, GSAP Scroll Trigger
+Dependencies: GSAP, GSAP Scroll Trigger, utils/parseFlex.js
 
 Demo: https://terrainagency.com/ghost/objects/scrollsequence/demo
 

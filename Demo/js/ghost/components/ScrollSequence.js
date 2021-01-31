@@ -1,10 +1,12 @@
+import {parseFlex} from '../utils/parseFlex.js'
+
 export class ScrollSequence {
     constructor(sequenceContainer, config) {
         this.container = document.querySelector(sequenceContainer)
         this.triggerContainer = this.buildTriggerContainer(config.paddingTop, config.paddingBottom) 
         this.panelsContainer = config.panelsContainer ? this.container.querySelector(config.panelsContainer) : this.container.querySelector("[data-panels]")
         this.audit = this.debug(config.debug)
-        this.panels = this.buildPanels(config.panels ? config.panels : "[data-panel]", config.settings.config ? config.settings.config : {})
+        this.panels = this.buildPanels(config.panels ? config.panels : "[data-panel]", config.settings ? config.settings : {})
         this.version = "0.1"
         this.init()
     }
@@ -26,7 +28,6 @@ export class ScrollSequence {
             // 1. Define panel
             let name = panel.dataset.panel
             let height = panel.dataset.height
-
             let settings = config[name] ? config[name] : {}     
 
             // Margin defaults
@@ -63,8 +64,6 @@ export class ScrollSequence {
             let str = `<div data-trigger="${name}" style="display: flex; flex-direction: column; height: ${parseFloat(height) * 100}vh; margin-top: ${obj.settings.marginTop}; margin-bottom: ${obj.settings.marginBottom}; `
             this.audit ? str += `border: 1px solid ${this.debug.primary}">${name}` : `">`
             str += `</div>`
-
-            console.log(str)
 
             this.triggerContainer.innerHTML += str
 
@@ -149,38 +148,16 @@ export class ScrollSequence {
         if(config) {
 
             // 1. Set colors
-            // FLAG: To support hex codes use gsap.utils.splitColor()
+            // FLAG: To support hex codes use gsap.utils.splitColor(), also consider building toPalette()
             this.debug.primary = config.primary ? `rgb(${config.primary.r},${config.primary.g},${config.primary.b})` : `rgb(0,89,254)`
             this.debug.secondary = config.secondary ? `rgb(${config.secondary.r},${config.secondary.g},${config.secondary.b})` : `rgb(88,21,239)`
             this.debug.opacity = config.opacity ? config.opacity : 0.1
             this.debug.bg = config.primary ? `rgba(${config.primary.r},${config.primary.g},${config.primary.b},${this.debug.opacity})` : `rgb(0,89,254,${this.debug.opacity})`           
 
-            let position = parseFlexXY(config.position)
-
-            function parseFlexXY(str) {
-                if(str) {
-                    let pos = str.split(/\s+/)
-                    pos.forEach((p, i) => {
-                        switch(p) {
-                            case "left":
-                            case "top": pos[i] = "flex-start"
-                                break
-                            case "center": pos[i] = "center"
-                                break
-                            case "right":
-                            case "bottom": pos[i] = "flex-end"
-                                break
-                        }
-                    })
-                    return pos
-                }
-                return ["flex-start", "flex-start"]
-            }
+            let position = parseFlex(config.position)
 
             // 2. Add debug panel to DOM
             let id = this.container.id
-
-            console.log(id)
 
             this.panelsContainer.innerHTML += `
                 <div data-debug="${id}" style="
@@ -240,6 +217,3 @@ export class ScrollSequence {
         return config
     }
 }
-
-
-
