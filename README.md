@@ -1,4 +1,6 @@
-![Ghost Logo](https://github.com/terrainagency/[reponame]/blob/[branch]/image.jpg?raw=true)
+<p align="center">
+  <img width="180" height="180" src="https://github.com/terrainagency/ghost/blob/main/assets/logo.svg" alt="Ghost: Agnostic GSAP and Tailwind Framework">
+</p>
 
 # ScrollSequence.js
 
