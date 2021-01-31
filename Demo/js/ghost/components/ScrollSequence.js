@@ -27,17 +27,19 @@ export class ScrollSequence {
 
             // 1. Define panel
             let name = panel.dataset.panel
-            let height = panel.dataset.height
             let settings = config[name] ? config[name] : {}     
 
-            // Margin defaults
+            // Spacing defaults
+            settings.height = parseFloat(panel.dataset.height * 100) + "vh"
             settings.marginTop = settings.marginTop ? settings.marginTop : 0
             settings.marginBottom = settings.marginBottom ? settings.marginBottom : 0
+            settings.paddingTop = settings.paddingTop ? settings.paddingTop : 0
+            settings.paddingBottom = settings.paddingBottom ? settings.paddingBottom : 0
 
             let obj = {
                 name: name,
                 container: panel,
-                height: height,
+                height: settings.height,
                 settings: (() => {
                 
                     // ScrollTrigger settings
@@ -48,6 +50,7 @@ export class ScrollSequence {
                         end: settings.end ? settings.end : "bottom center",
                         scrub: settings.scrub ? settings.scrub : false,
                         snap: settings.snap ? settings.snap : undefined,
+                        pinSpacing: false,
                         onEnter: settings.onEnter ? settings.onEnter : this.audit ? this.debugEnter : undefined,
                         onEnterBack: settings.onEnterBack ? settings.onEnterBack : this.audit ? this.debugEnter : undefined,
                         onLeave: settings.onLeave ? settings.onLeave : this.audit ? this.debugLeave : undefined,
@@ -57,23 +60,27 @@ export class ScrollSequence {
 
                     return settings
                 })(),
-                states: this.buildStates(panel)
+                states: this.buildStates(panel, panel.dataset.states, settings.states)
             }
-            
-            // 2. Add panel to DOM
-            let str = `<div data-trigger="${name}" style="display: flex; flex-direction: column; height: ${parseFloat(height) * 100}vh; margin-top: ${obj.settings.marginTop}; margin-bottom: ${obj.settings.marginBottom}; `
-            this.audit ? str += `border: 1px solid ${this.debug.primary}">${name}` : `">`
-            str += `</div>`
 
-            this.triggerContainer.innerHTML += str
+            // 2. Add panel to DOM
+            let str = `<div data-trigger="${name}" style="position: relative; height: ${settings.height}; margin-top: ${obj.settings.marginTop}; margin-bottom: ${obj.settings.marginBottom}; padding-top: ${obj.settings.paddingTop}; padding-bottom: ${obj.settings.paddingBottom}; `
+            this.audit ? str += `border: 1px solid ${this.debug.primary}"><div data-debug style="position: absolute; top: 1rem; left: 1rem; color: ${this.debug.primary}">${name}</div>` : `">`
 
             if(obj.states.length > 0) {
-                let stateContainer = this.triggerContainer.querySelector(`[data-trigger="${name}"]`)
-
+                str += `<div data-states="${name}" style="height: 100%; width: 100%; display: flex; flex-direction: column;">`
                 obj.states.forEach(state => {
-                    stateContainer.innerHTML += `<div data-trigger="${state.name}" style="flex: 1 1 0%;"></div>`
+       
+                    console.log(`**${state.settings.trigger}`)
+
+                    str += `<div data-trigger="${state.name}" style="flex: 1 1 0%; `
+                    this.audit ? str += `border: 1px solid ${this.debug.secondary}; color: ${this.debug.secondary}; padding: 1rem;">${state.name}</div>` : `"></div>`
                 })
+                str += `</div>`
             }
+
+            str += `</div>`
+            this.triggerContainer.innerHTML += str
 
             arr.push(obj)
         })
@@ -82,28 +89,29 @@ export class ScrollSequence {
     }
 
     // create states
-    buildStates(panel) {
-        let num = panel.dataset.states;
-        let arr = []
-
+    buildStates(panel, num, config) {
+        // If number of states > 0
         if(num > 0) {
+            let states = []
+
             for(var i = 0; i < num; i++) {
+                let settings = config ? config : {}
                 let name = `${panel.dataset.panel}-${i}`
 
-                arr.push({
-                    name: name,
-                    settings: {
-                        config: {
-                            trigger: `[data-trigger="${name}"]`,
-                            toggleActions: "play pause resume reset",
-                            start: "top center",
-                            end: "bottom center",
-                        }
-                    }
-                })
+                settings = {
+                    toggleActions: settings.toggleActions ? settings.toggleActions : "play pause resume reset",
+                    snap: settings.snap ? settings.snap : undefined,
+                    start: settings.start ? settings.start : "top center",
+                    end: settings.end ? settings.end : "bottom center",
+                    pinSpacing: false,
+                    trigger: `[data-trigger="${name}"]`,
+                }
+
+                states.push({name, settings})
             }
+            return states
         }
-        return arr
+        return []
     }
     init() {       
 
@@ -136,8 +144,10 @@ export class ScrollSequence {
             // 3. Create a scrollTrigger for each state
             if(panel.states.length > 0) {
                 panel.states.forEach(state => {
+                    console.log(state.settings)
+
                     state.master = gsap.timeline({
-                        scrollTrigger: state.settings.config
+                        scrollTrigger: state.settings
                     })
                 })
             }
