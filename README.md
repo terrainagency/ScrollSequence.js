@@ -178,6 +178,8 @@ v0.1:
 - [x] Add support for top and bottom padding
 
 v1.0:
+- [ ] Clean settings object
+- [ ] Support margin param 
 - [x] Add margin params to triggers
 - [ ] Dynamic support for window resizing
 - [ ] Support mediaQueries
