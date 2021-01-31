@@ -1,3 +1,5 @@
+![Ghost Logo](https://github.com/terrainagency/[reponame]/blob/[branch]/image.jpg?raw=true)
+
 # ScrollSequence.js
 
 Dependencies: GSAP, GSAP Scroll Trigger
