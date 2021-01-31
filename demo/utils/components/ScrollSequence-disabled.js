@@ -31,71 +31,25 @@ export class ScrollSequence {
         let arr = []
 
         panels.forEach((panel, i) => {
-            let states = panel.querySelectorAll("[data-state]")
-            let settings = config[panel.dataset.panel] ? config[panel.dataset.panel] : {}  
-
             arr.push({
                 name: panel.dataset.panel,
                 container: panel,
-                settings: settings,
-                states: this.buildStates(panel, states),
-                // snapPos: this.buildSnap(states)           
+                settings: config[panel.dataset.panel] ? config[panel.dataset.panel] : {}
             })
 
-            let marginTop = settings.marginTop ? settings.marginTop : 0
-            let marginBottom = settings.marginBottom ? settings.marginBottom : 0
-
-            let str = `<div data-trigger="${panel.dataset.panel}" style="display: flex; flex-direction: column; height: ${parseFloat(panel.dataset.height) * 100}vh; margin-top: ${marginTop}; margin-bottom: ${marginBottom}; `
+            let str = `<div data-trigger="${panel.dataset.panel}" style="height: ${parseFloat(panel.dataset.height) * 100}vh; `
             if(this.debug) {
-                str += `background-color: ${this.debug.bg}; color: ${this.debug.primary}; font-size: 0.875rem; line-height: 1.25rem; border-top: 1px solid ${this.debug.primary}; `
+                str += `background-color: ${this.debug.bg}; padding: 1rem; color: ${this.debug.primary}; font-size: 0.875rem; line-height: 1.25rem; border-top: 1px solid ${this.debug.primary}; `
                 if(i === arr.length - 1) {str += `border-bottom: 1px solid ${this.debug.primary};`}
             }
             str += `">`
-
-            if(this.debug){str += `<div style="position: absolute; padding: 1rem;">${panel.dataset.panel}</div>`}
-
-            if(states) {
-                states.forEach((state, i) => {
-                    if(this.debug) {
-                        str += `<div data-trigger="${state.dataset.state}" style="flex: 1 1 0%; text-align: right; font-size: 0.875rem; line-height: 1.25rem; padding: 1rem; border-top: 1px solid ${this.debug.primary}">${state.dataset.state}</div>`
-                    } else {
-                        str += `<div data-trigger="${state.dataset.state}" style="flex: 1 1 0%;"></div>`
-                    }
-                })
-            }
-
+            if(this.debug){str += `${panel.dataset.panel}`}
             str += `</div>`
 
             this.triggerContainer.innerHTML += str
         })
 
         return arr
-    }
-
-    // This is a utility function make sure to remove and update this later
-    buildSnap(arr) {
-        let result = [0]
-        let pos = 0
-
-        for(var i = 0; i < arr.length; i++) {
-            pos += 1 / arr.length
-            result.push(pos)
-        }
-
-        return result
-    }
-    buildStates(panel, states) {
-        let arr = []
-
-        if(states) {
-            states.forEach((state, i) => {
-                arr.push({
-                    name: state.dataset.state,
-                })
-            })
-
-            return arr
-        }
     }
     configDebug(debug) {
         if(debug === true) {debug = {primary: "#0059FE", secondary: "#F7B603", bg: "rgba(166,218,255,0.25)"}} 
@@ -126,18 +80,16 @@ export class ScrollSequence {
         })
 
         // Create a master timeline and scrollTrigger for each panel
-        
-        this.panels.forEach(panel => {      
-
+        this.panels.forEach(panel => {
+            console.log(panel.settings)
             panel.master = gsap.timeline({
                 scrollTrigger: {
                     trigger: this.container.querySelector(`[data-trigger="${panel.container.dataset.panel}"]`),
                     toggleActions: panel.settings.toggleActions ? panel.settings.toggleActions : "play pause resume reset",
                     start: panel.settings.start ? panel.settings.start : "top center",
                     end: panel.settings.end ? panel.settings.end : "bottom center",
-                    // scrub: typeof panel.settings.scrub === "undefined" ? true : panel.settings.scrub,
-                    scrub: false,
-                    snap: calcSnap(),
+                    scrub: panel.settings.scrub ? panel.settings.scrub : 1,
+                    snap: panel.settings.snap,
                     onEnter: panel.settings.onEnter ? panel.settings.onEnter : this.debugEnter,
                     onEnterBack: panel.settings.onEnterBack ? panel.settings.onEnterBack : this.debugEnter,
                     onLeave: panel.settings.onLeave ? panel.settings.onLeave : this.debugLeave,
@@ -145,47 +97,11 @@ export class ScrollSequence {
                     onUpdate: panel.settings.onUpdate ? panel.settings.onUpdate : this.debugUpdate
                 }
             })
-
-            console.log(typeof panel.settings.scrub === "undefined" ? true : panel.settings.scrub)
-
-            function calcSnap() {
-                if(panel.states.length > 0) {
-                    let obj = 1 / (panel.states.length )
-                    return obj
-                }
-                return false
-            }
-
-            if(panel.states.length > 0) {
-
-                panel.states.forEach((state, i) => {
-                    state.master = gsap.timeline({
-                        scrollTrigger: {
-                            trigger: this.container.querySelector(`[data-trigger="${state.name}"]`),
-                            toggleActions: "play pause resume reset",
-                            start: "top center",
-                            end: "bottom center",
-                            scrub: false,
-
-                            onEnter: () => {
-                                panel.master.play()
-                                console.log(`Entered ${state.name}`)
-                                console.log(panel.master)
-                            },
-                        }
-                    })
-
-                    console.log(this.container.querySelector(`[data-trigger="${state.name}"]`))
-
-                })
-
-            }
-
         })
     }
     initDebug() {
         this.panelsContainer.innerHTML += `
-            <div style="pointer-events: none; position: absolute; z-index: 9999; width: 100%; height: 100vh; padding: 1rem; font-size: .875rem; line-height: 1.25rem; background-color: ${this.debug.bg}; box-shadow: inset 0 0 0 1px ${this.debug.primary}; color: ${this.debug.primary};">
+            <div style="position: absolute; width: 100%; height: 100vh; padding: 1rem; font-size: .875rem; line-height: 1.25rem; background-color: ${this.debug.bg}; box-shadow: inset 0 0 0 1px ${this.debug.primary}; color: ${this.debug.primary};">
                 <div>
                     <p>panel: <span id="${this.container.id}-debug-panel">undefined</span></p>
                     <p>progression: <span id="${this.container.id}-debug-panel-prog">undefined</span></p>
@@ -222,19 +138,3 @@ export class ScrollSequence {
         console.log(this)
     }
 }
-
-
-// v1.0
-// Load next panel at end of each panel
-
-
-
-
-
-// NOTES
-
-// OBJECTS
-
-// Transition
-// Scrub
-// Snap
