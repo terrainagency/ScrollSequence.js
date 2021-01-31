@@ -10,10 +10,7 @@ Demo: https://terrainagency.com/ghost/objects/scrollsequence/demo
 
 ## Usage
 
-ScrollSequence is a <3kb (minified) component that creates a pinned sequence of panels. 
-
-The goal of ScrollSequence is to create an efficient workflow by providing a structure for rapid development of scroll based pages.
-
+ScrollSequence provides a more efficient workflow for building modular scroll based pages. ScrollSequence is available in a development mode with debug tools, and in production (<3kb minified).
 
 ```javascript
 import {ScrollSequence} from './ghost/components/ScrollSequence.js'
@@ -23,11 +20,11 @@ import {ScrollSequence} from './ghost/components/ScrollSequence.js'
 
 ```HTML
 <!-- ScrollSequence container -->
-<div data-sequence="genesis" class="relative w-screen min-h-screen">
+<div id="sequence" class="relative w-screen min-h-screen">
     <div data-panels class="absolute w-screen h-screen">
-        <section data-panel="myFirstPanel" data-height="2" class="absolute w-screen h-screen">
+        <section data-panel="myPanel" data-height="2" class="absolute w-screen h-screen">
 
-            <!-- Content for myFirstPanel -->
+            <!-- Content for myPanel -->
 
         </section>
     </div>
@@ -43,7 +40,7 @@ Setting | Description
 
 ## 2: Create a new ScrollSequence
 
-For basic scenarios, creating a new ScrollSequence will likely look like the `example1` below. 
+For basic scenarios, creating a new ScrollSequence may look like `example1` below.
 
 ```javascript
 const sequence = new ScrollSequence("#id", {settings: {}, debug: true})
@@ -58,7 +55,7 @@ paddingTop | number | 0.5 | Defines top padding for the pinned sequence
 paddingBottom | number | 0.5 | Defines top padding for the pinned sequence
 debug | boolean or {} | false | Turns debug mode off/on
 
-Custom configurations for specific panels can be passed through the settings object. In `example2` below, customized properties were attached to `SnapPanel`. 
+Custom configurations for specific panels can be passed through the settings object. In `example2` below, customized properties were attached to `myPanel`. 
 
 ```javascript
 // 1. Create sequence from selector #id as container
@@ -68,13 +65,8 @@ const sequence = new ScrollSequence("#id", {
     settings: {
 
         // NOTE: Must match the [data-panel] value
-        SnapPanel: {
-            snap: {
-                snapTo: "labels", 
-                duration: {min: 0.1, max: 0.4}, 
-                delay: 0.2, 
-                ease: "power1.inOut" 
-            }
+        myPanel: {
+            scrub: true,
         }
     },
 
@@ -106,12 +98,11 @@ Each panel contains a master timeline `panel.master` containing a scrollTrigger 
 sequence.panels.forEach(panel => {
     switch(panel.name) {
 
-        // case value must match the [data-panel] value
         case "myPanel":
 
             (() => {
 
-                // panel.master.to({})
+                panel.master.to({})
 
             })()
 
