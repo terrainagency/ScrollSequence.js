@@ -156,9 +156,16 @@ const sequence = new ScrollSequence("#id", {
 })
 ```
 
-Enable snapping by adding a `snap: {}` object to the panel settings. Panels can only contain `scrub` or `snap`, they will not function with both.
+> Panels can only contain `scrub` or `snap`, they will not function with both.
 
-> In order for snapping to labels to function properly, you must define labels within your `panel.master` animation. 
+Debug Options
+
+Key | Type | Default | Description
+------------ | ------------ | ------------ | ------------
+primary | {} | {r: 0, g: 89, b: 254} | Sets the primary debug color
+secondary | {} | {r: 88, g: 21, b: 239} | Sets the secondary debug color
+opacity | num | 0.1 | Sets the opacity of the debug background color
+position | str | "top left" | Sets the placement of the debug parameters
 
 ## Status
 
