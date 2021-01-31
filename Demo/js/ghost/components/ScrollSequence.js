@@ -2,16 +2,16 @@ export class ScrollSequence {
     constructor(sequenceContainer, config) {
         this.container = document.querySelector(sequenceContainer)
         this.triggerContainer = this.buildTriggerContainer(config.paddingTop, config.paddingBottom) 
-        this.panelsContainer = config.panelsContainer ? document.querySelector(config.panelsContainer) : document.querySelector("[data-panels]")
+        this.panelsContainer = config.panelsContainer ? this.container.querySelector(config.panelsContainer) : this.container.querySelector("[data-panels]")
         this.audit = this.debug(config.debug)
-        this.panels = this.buildPanels(config.panels, config ? config : {})
+        this.panels = this.buildPanels(config.panels ? config.panels : "[data-panel]", config.settings.config ? config.settings.config : {})
+        this.version = "0.1"
         this.init()
     }
     buildTriggerContainer(paddingTop, paddingBottom) {
         let pt = paddingTop ? paddingTop : "50vh"
         let pb = paddingBottom ? paddingBottom : "50vh"
 
-        // if(!padding) {padding = "50vh"}
         this.container.innerHTML += `<!-- Trigger Container --><div data-triggers style="padding-top: ${pt};  padding-bottom: ${pb};"></div>`
 
         return this.container.querySelector("[data-triggers]")
@@ -27,20 +27,18 @@ export class ScrollSequence {
             let name = panel.dataset.panel
             let height = panel.dataset.height
 
-            let settings = config.settings[name] ? config.settings[name] : {}
+            let settings = config[name] ? config[name] : {}     
 
             // Margin defaults
             settings.marginTop = settings.marginTop ? settings.marginTop : 0
             settings.marginBottom = settings.marginBottom ? settings.marginBottom : 0
-
-            console.log(settings.marginTop)
 
             let obj = {
                 name: name,
                 container: panel,
                 height: height,
                 settings: (() => {
-         
+                
                     // ScrollTrigger settings
                     settings.config = {
                         trigger: `[data-trigger="${name}"]`,
@@ -55,14 +53,20 @@ export class ScrollSequence {
                         onLeaveBack: settings.onLeaveBack ? settings.onLeaveBack : this.audit ? this.debugLeave : undefined,
                         onUpdate: settings.onUpdate ? settings.onUpdate : this.audit ? this.debugUpdate : undefined
                     }
-                    
+
                     return settings
                 })(),
                 states: this.buildStates(panel)
             }
             
             // 2. Add panel to DOM
-            this.triggerContainer.innerHTML += `<div data-trigger="${name}" style="display: flex; flex-direction: column; height: ${parseFloat(height) * 100}vh; margin-top: ${obj.settings.marginTop}; margin-bottom: ${obj.settings.marginBottom};"></div>`
+            let str = `<div data-trigger="${name}" style="display: flex; flex-direction: column; height: ${parseFloat(height) * 100}vh; margin-top: ${obj.settings.marginTop}; margin-bottom: ${obj.settings.marginBottom}; `
+            this.audit ? str += `border: 1px solid ${this.debug.primary}">${name}` : `">`
+            str += `</div>`
+
+            console.log(str)
+
+            this.triggerContainer.innerHTML += str
 
             if(obj.states.length > 0) {
                 let stateContainer = this.triggerContainer.querySelector(`[data-trigger="${name}"]`)
@@ -143,50 +147,44 @@ export class ScrollSequence {
     debug(config) {
 
         if(config) {
-            
+
             // 1. Set colors
-            let primary = parseColor(config.primary, "#0059fe")
-            let secondary = parseColor(config.secondary, "#f7b603")
-            let opacity = config.opacity ? config.opacity : 0.2
+            // FLAG: To support hex codes use gsap.utils.splitColor()
+            this.debug.primary = config.primary ? `rgb(${config.primary.r},${config.primary.g},${config.primary.b})` : `rgb(0,89,254)`
+            this.debug.secondary = config.secondary ? `rgb(${config.secondary.r},${config.secondary.g},${config.secondary.b})` : `rgb(88,21,239)`
+            this.debug.opacity = config.opacity ? config.opacity : 0.1
+            this.debug.bg = config.primary ? `rgba(${config.primary.r},${config.primary.g},${config.primary.b},${this.debug.opacity})` : `rgb(0,89,254,${this.debug.opacity})`           
 
-            function parseColor(c, def) {
-                let color 
-                if(!c) {color = def}
-                else {color = typeof c === 'string' || c instanceof String ? c : `rgb(${c.r}, ${c.g}, ${c.b})`}
+            let position = parseFlexXY(config.position)
 
-                return color
+            function parseFlexXY(str) {
+                if(str) {
+                    let pos = str.split(/\s+/)
+                    pos.forEach((p, i) => {
+                        switch(p) {
+                            case "left":
+                            case "top": pos[i] = "flex-start"
+                                break
+                            case "center": pos[i] = "center"
+                                break
+                            case "right":
+                            case "bottom": pos[i] = "flex-end"
+                                break
+                        }
+                    })
+                    return pos
+                }
+                return ["flex-start", "flex-start"]
             }
 
-            let position = parseFlexItems(config.position)
+            // 2. Add debug panel to DOM
+            let id = this.container.id
 
-            function parseFlexItems(str) {
-                let pos = str.split(/\s+/)
-                switch(pos[0]) {
-                    case "top": pos[0] = "flex-start" 
-                        break
-                    case "center": pos[1] = "center"
-                        break
-                    case "bottom": pos[0] = "flex-end"
-                        break
-                }
-                switch(pos[1]) {
-                    case "left": pos[1] = "flex-start" 
-                        break
-                    case "center": pos[1] = "center"
-                        break
-                    case "right": pos[1] = "flex-end"
-                        break
-                }
-                return pos
-            }
+            console.log(id)
 
-            // 2. Set style
-            const style = document.createElement('style');
-            style.innerHTML = `
-                [data-trigger] {
-                    border: 1px solid ${primary};
-                }
-                [data-debug] {
+            this.panelsContainer.innerHTML += `
+                <div data-debug="${id}" style="
+                    background-color: ${this.debug.bg};
                     position: absolute; 
                     display: flex;
                     flex-direction: column;
@@ -195,29 +193,13 @@ export class ScrollSequence {
                     top: 0;
                     pointer-events: none; 
                     z-index: 9999; 
-                    width: 100%; height: 
-                    100vh; padding: 
-                    1rem; font-size: 
-                    .875rem; line-height: 
-                    1.25rem; 
-                    box-shadow: inset 0 0 0 1px ${primary}; 
-                    color: ${primary};
-                }
-                [data-debug]::after {
-                    content: '';
-                    position: absolute;
-                    top: 0; right: 0; bottom: 0; left: 0;
-                    background-color: ${primary}; 
-                    opacity: ${opacity};
-                }
-            `
-            document.head.appendChild(style);
-
-            // 3. Add debug panel to DOM
-            let id = this.container.id
-
-            this.panelsContainer.innerHTML += `
-                <div data-debug="${id}">
+                    width: 100vw; height: 100vh; 
+                    padding: 1rem; 
+                    font-size: .875rem; 
+                    line-height: 1.25rem; 
+                    box-shadow: inset 0 0 0 1px ${this.debug.primary}; 
+                    color: ${this.debug.primary};
+                ">
                     <div>
                         <p>panel: <span id="${id}-panel">undefined</span></p>
                         <p>progression: <span id="${id}-panel-prog">undefined</span></p>
@@ -236,7 +218,7 @@ export class ScrollSequence {
             let panelHeight = document.querySelector(`#${id}-length`)
             let currentSeq = document.querySelector(`#${id}-panel`)
 
-            // 4. Set scrollTrigger defaults
+            // 3. Set scrollTrigger defaults
             this.debugEnter = (self) => {
                 currentSeq.innerHTML = self.trigger.dataset.trigger
                 panelHeight.innerHTML = self.trigger.offsetHeight / window.innerHeight * 100 + "vh"
@@ -249,12 +231,15 @@ export class ScrollSequence {
             this.debugUpdate = (self) =>  panelProg.innerHTML = self.progress.toFixed(2)
 
             ScrollTrigger.defaults({
-                markers: {startColor: primary, endColor: secondary, fontSize: "10px", indent: 10},
+                markers: {startColor: this.debug.primary, endColor: this.debug.secondary, fontSize: "10px", indent: 10},
             })
 
-            // 5. Log sequence for reference
+            // 4. Log sequence for reference
             console.log(this)
         }
         return config
     }
 }
+
+
+
