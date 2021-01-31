@@ -179,6 +179,7 @@ v0.1:
 
 v1.0:
 - [ ] Clean settings object
+- [ ] Support margin param 
 - [x] Add margin params to triggers
 - [ ] Dynamic support for window resizing
 - [ ] Support mediaQueries
