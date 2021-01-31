@@ -178,9 +178,10 @@ v0.1:
 - [x] Add support for top and bottom padding
 
 v1.0:
-- [ ] Clean settings object
-- [ ] Support margin param 
+- [x] Support margin param 
+- [x] States have configurable settings
 - [x] Add margin params to triggers
+- [ ] Clean settings objects
 - [ ] Dynamic support for window resizing
 - [ ] Support mediaQueries
 - [ ] Add scale parameter for trigger heights
