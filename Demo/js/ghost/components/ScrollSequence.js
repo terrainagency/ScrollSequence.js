@@ -5,7 +5,7 @@ export class ScrollSequence {
         this.container = document.querySelector(sequenceContainer)
         this.triggerContainer = this.buildTriggerContainer(config.paddingTop, config.paddingBottom) 
         this.panelsContainer = config.panelsContainer ? this.container.querySelector(config.panelsContainer) : this.container.querySelector("[data-panels]")
-        this.config = config || {}
+        this.config = config || {panels: undefined}
         this.audit = this.debug(config.debug)
         this.panels = this.buildPanels()
         this.version = "0.2"
@@ -59,14 +59,14 @@ export class ScrollSequence {
             }
             
             // 2. Add panel to DOM
-            let str = `<div data-trigger="${name}" style="pointer-events: none; position: relative; height: ${settings.height}; margin-top: ${obj.settings.marginTop}; margin-bottom: ${obj.settings.marginBottom}; padding-top: ${obj.settings.paddingTop}; padding-bottom: ${obj.settings.paddingBottom}; `
+            let str = `<div data-trigger="${name}" style="pointer-events: none; position: relative; height: ${settings.height}; margin-top: ${settings.marginTop}; margin-bottom: ${settings.marginBottom}; padding-top: ${settings.paddingTop}; padding-bottom: ${settings.paddingBottom}; `
             this.audit ? str += `border: 1px solid ${this.debug.primary}"><div data-debug style="position: absolute; top: 1rem; left: 1rem; color: ${this.debug.primary}">${name}</div>` : str += `">`
 
             if(obj.states.length > 0) {
                 str += `<div data-states="${name}" style="pointer-events: none; height: 100%; width: 100%; display: flex; flex-direction: column;">`
                 obj.states.forEach(state => {
                     str += `<div data-trigger="${state.name}" style="flex: 1 1 0%; `
-                    this.audit ? str += `border: 1px solid ${this.debug.secondary}; color: ${this.debug.secondary}; padding: 1rem;">${state.name}</div>` : `"></div>`
+                    this.audit ? str += `border: 1px solid ${this.debug.secondary}; color: ${this.debug.secondary}; padding: 1rem; text-align: center;">${state.name}</div>` : `"></div>`
                 })
                 str += `</div>`
             }
@@ -141,6 +141,12 @@ export class ScrollSequence {
                 })
             }
         })
+    }
+    toLabel(tl, label, dur) {
+        const percent = tl.labels[label] / tl.totalDuration()
+        const pos = tl.scrollTrigger.start + (tl.scrollTrigger.end - tl.scrollTrigger.start) * percent
+    
+        gsap.to(window, {duration: dur, scrollTo: pos})
     }
     debug(config) {
 
@@ -218,6 +224,3 @@ export class ScrollSequence {
         return config
     }
 }
-
-
-

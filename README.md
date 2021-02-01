@@ -182,6 +182,7 @@ v1.0:
 - [x] States have configurable settings
 - [x] Add margin params to triggers
 - [x] Clean settings objects
+- [x] Create toLabel()
 - [ ] Dynamic support for window resizing
 - [ ] Support mediaQueries
 - [ ] Add scale parameter for trigger heights
