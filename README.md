@@ -167,7 +167,7 @@ ScrollSequence.js is a part of Terrain's Ghost library, and is currently in deve
 
 Ghost's code is non-obtrusive, and does not create any actions without your direction. It is designed to be as agnostic as possible, allowing it to function freely accross a large variety of applications.
 
-v1.0:
+v0.1:
 - [x] Basic architecture 
 - [x] Integrate base panel ScrollTriggers
 - [x] Add padding parameter to sequence object with a default
@@ -179,13 +179,18 @@ v1.0:
 - [x] Allow for multiple ScrollSequences on a single page
 - [x] Add support for top and bottom padding
 - [x] Support margin param 
+
+v0.2:
 - [x] States have configurable settings
 - [x] Add margin params to triggers
 - [x] Clean settings objects
 - [x] Create toLabel()
+- [ ] Move triggers container into a single instance
 - [ ] Dynamic support for window resizing
 - [ ] Support mediaQueries
 - [ ] Add scale parameter for trigger heights
+
+v1.0:
 - [ ] Build the ScrollSequence.toPos() method
 - [ ] Enable lazy loading
 - [ ] Create a webpack dev environment for Ghost repositories
