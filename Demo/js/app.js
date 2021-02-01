@@ -11,12 +11,13 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // 2. Create a new ScrollSequence instance
     const sequence = new ScrollSequence("#sequence", {
-        panels: "[data-panel]",
-        settings: {
+        panelSelector: "[data-panel]",
+        // onUpdate: () => console.log("Sequence entered"),
+        panels: {
             features: {
                 marginTop: "50vh",
                 marginBottom: "50vh",
-                snap: 0.3333333333
+                // snap: 0.3333333333
             },
         },
         debug: debug

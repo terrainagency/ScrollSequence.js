@@ -5,10 +5,9 @@ export class ScrollSequence {
         this.container = document.querySelector(sequenceContainer)
         this.triggerContainer = this.buildTriggerContainer(config.paddingTop, config.paddingBottom) 
         this.panelsContainer = config.panelsContainer ? this.container.querySelector(config.panelsContainer) : this.container.querySelector("[data-panels]")
-        this.config = config || {}
         this.audit = this.debug(config.debug)
-        this.panels = this.buildPanels()
-        this.version = "0.2"
+        this.panels = this.buildPanels(config.panels ? config.panels : "[data-panel]", config.settings ? config.settings : {})
+        this.version = "0.1"
         this.init()
     }
     buildTriggerContainer(paddingTop, paddingBottom) {
@@ -19,8 +18,8 @@ export class ScrollSequence {
 
         return this.container.querySelector("[data-triggers]")
     }
-    buildPanels() {
-        let sel = this.config.panelSelector || "[data-panel]"        
+    buildPanels(sel, config) {
+        
         let panels = this.container.querySelectorAll(sel)
         let arr = []
 
@@ -28,48 +27,58 @@ export class ScrollSequence {
 
             // 1. Define panel
             let name = panel.dataset.panel
-            let settings = this.config.panels[name] || {}     
+            let settings = config[name] ? config[name] : {}     
 
             // Spacing defaults
             settings.height = parseFloat(panel.dataset.height * 100) + "vh"
-            settings.marginTop = settings.marginTop || 0
-            settings.marginBottom = settings.marginBottom || 0
-            settings.paddingTop = settings.paddingTop || 0
-            settings.paddingBottom = settings.paddingBottom || 0
+            settings.marginTop = settings.marginTop ? settings.marginTop : 0
+            settings.marginBottom = settings.marginBottom ? settings.marginBottom : 0
+            settings.paddingTop = settings.paddingTop ? settings.paddingTop : 0
+            settings.paddingBottom = settings.paddingBottom ? settings.paddingBottom : 0
 
             let obj = {
                 name: name,
                 container: panel,
                 height: settings.height,
-                settings: {
-                    trigger: `[data-trigger="${name}"]`,
-                    toggleActions: settings.toggleActions || "play complete resume reset",
-                    start: settings.start || "top center",
-                    end: settings.end || "bottom center",
-                    scrub: settings.scrub || false,
-                    snap: settings.snap || undefined,
-                    pinSpacing: false,
-                    onEnter: settings.onEnter || this.debugEnter || undefined,
-                    onEnterBack: settings.onEnterBack || this.debugEnter || undefined,
-                    onLeave: settings.onLeave || this.debugLeave || undefined,
-                    onLeaveBack: settings.onLeaveBack || this.debugLeave || undefined,
-                    onUpdate: settings.onUpdate || this.debugUpdate || undefined,
-                },
+                settings: (() => {
+                
+                    // ScrollTrigger settings
+                    settings.config = {
+                        trigger: `[data-trigger="${name}"]`,
+                        toggleActions: settings.toggleActions ? settings.toggleActions : "play pause resume reset",
+                        start: settings.start ? settings.start : "top center",
+                        end: settings.end ? settings.end : "bottom center",
+                        scrub: settings.scrub ? settings.scrub : false,
+                        snap: settings.snap ? settings.snap : undefined,
+                        pinSpacing: false,
+                        onEnter: settings.onEnter ? settings.onEnter : this.audit ? this.debugEnter : undefined,
+                        onEnterBack: settings.onEnterBack ? settings.onEnterBack : this.audit ? this.debugEnter : undefined,
+                        onLeave: settings.onLeave ? settings.onLeave : this.audit ? this.debugLeave : undefined,
+                        onLeaveBack: settings.onLeaveBack ? settings.onLeaveBack : this.audit ? this.debugLeave : undefined,
+                        onUpdate: settings.onUpdate ? settings.onUpdate : this.audit ? this.debugUpdate : undefined
+                    }
+
+                    return settings
+                })(),
                 states: this.buildStates(panel, panel.dataset.states, settings.states)
             }
-            
+
             // 2. Add panel to DOM
-            let str = `<div data-trigger="${name}" style="pointer-events: none; position: relative; height: ${settings.height}; margin-top: ${obj.settings.marginTop}; margin-bottom: ${obj.settings.marginBottom}; padding-top: ${obj.settings.paddingTop}; padding-bottom: ${obj.settings.paddingBottom}; `
-            this.audit ? str += `border: 1px solid ${this.debug.primary}"><div data-debug style="position: absolute; top: 1rem; left: 1rem; color: ${this.debug.primary}">${name}</div>` : str += `">`
+            let str = `<div data-trigger="${name}" style="position: relative; height: ${settings.height}; margin-top: ${obj.settings.marginTop}; margin-bottom: ${obj.settings.marginBottom}; padding-top: ${obj.settings.paddingTop}; padding-bottom: ${obj.settings.paddingBottom}; `
+            this.audit ? str += `border: 1px solid ${this.debug.primary}"><div data-debug style="position: absolute; top: 1rem; left: 1rem; color: ${this.debug.primary}">${name}</div>` : `">`
 
             if(obj.states.length > 0) {
-                str += `<div data-states="${name}" style="pointer-events: none; height: 100%; width: 100%; display: flex; flex-direction: column;">`
+                str += `<div data-states="${name}" style="height: 100%; width: 100%; display: flex; flex-direction: column;">`
                 obj.states.forEach(state => {
+       
+                    console.log(`**${state.settings.trigger}`)
+
                     str += `<div data-trigger="${state.name}" style="flex: 1 1 0%; `
                     this.audit ? str += `border: 1px solid ${this.debug.secondary}; color: ${this.debug.secondary}; padding: 1rem;">${state.name}</div>` : `"></div>`
                 })
                 str += `</div>`
             }
+
             str += `</div>`
             this.triggerContainer.innerHTML += str
 
@@ -90,10 +99,10 @@ export class ScrollSequence {
                 let name = `${panel.dataset.panel}-${i}`
 
                 settings = {
-                    toggleActions: settings.toggleActions || "play complete resume reset",
-                    snap: settings.snap || undefined,
-                    start: settings.start || "top center",
-                    end: settings.end || "bottom center",
+                    toggleActions: settings.toggleActions ? settings.toggleActions : "play pause resume reset",
+                    snap: settings.snap ? settings.snap : undefined,
+                    start: settings.start ? settings.start : "top center",
+                    end: settings.end ? settings.end : "bottom center",
                     pinSpacing: false,
                     trigger: `[data-trigger="${name}"]`,
                 }
@@ -116,11 +125,11 @@ export class ScrollSequence {
                 end: "bottom bottom",
                 pin: this.panelsContainer,
                 anticipatePin: 1,
-                onEnter: this.config.onEnter || undefined,
-                onEnterBack: this.config.onEnterBack || undefined,
-                onLeave: this.config.onLeave || undefined,
-                onLeaveBack: this.config.onLeaveBack || undefined,
-                onUpdate: this.config.onUpdate || this.debugUpdateSeq || undefined,
+                onEnter: undefined,
+                onEnterBack: undefined,
+                onLeave: undefined,
+                onLeaveBack: undefined,
+                onUpdate: self => this.audit ? this.sequenceProg.innerHTML = self.progress.toFixed(2) : undefined,
                 pinSpacing: false,
                 markers: false,
             }
@@ -129,12 +138,14 @@ export class ScrollSequence {
         // 2. Create a scrollTrigger for each panel
         this.panels.forEach(panel => {
             panel.master = gsap.timeline({
-                scrollTrigger: panel.settings
+                scrollTrigger: panel.settings.config
             })
 
             // 3. Create a scrollTrigger for each state
             if(panel.states.length > 0) {
                 panel.states.forEach(state => {
+                    console.log(state.settings)
+
                     state.master = gsap.timeline({
                         scrollTrigger: state.settings
                     })
@@ -160,7 +171,6 @@ export class ScrollSequence {
 
             this.panelsContainer.innerHTML += `
                 <div data-debug="${id}" style="
-                    pointer-events: none; 
                     background-color: ${this.debug.bg};
                     position: absolute; 
                     display: flex;
@@ -206,7 +216,6 @@ export class ScrollSequence {
                 panelHeight.innerHTML = " "
             }
             this.debugUpdate = (self) =>  panelProg.innerHTML = self.progress.toFixed(2)
-            this.debugUpdateSeq = (self) => this.sequenceProg.innerHTML = self.progress.toFixed(2)
 
             ScrollTrigger.defaults({
                 markers: {startColor: this.debug.primary, endColor: this.debug.secondary, fontSize: "10px", indent: 10},
@@ -218,6 +227,3 @@ export class ScrollSequence {
         return config
     }
 }
-
-
-

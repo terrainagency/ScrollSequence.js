@@ -43,14 +43,14 @@ Setting | Description
 For basic scenarios, creating a new ScrollSequence may look like `example1` below.
 
 ```javascript
-const sequence = new ScrollSequence("#id", {settings: {}, debug: true})
+const sequence = new ScrollSequence("#id", {panels: {}, debug: true})
 ```
 
 Key | Type | Default | Description
 ------------ | ------------ | ------------ | ------------
-settings | object | {} | Object to pass custom settings for specific panels
+panels | object | {} | Object to pass custom settings for specific panels
 panelsContainer | string | [data-panel] | Selector of sequence panels to pin
-panels | string | [data-panel] | Selector for panels
+panelSelector | string | [data-panel] | Selector for panels
 paddingTop | number | 0.5 | Defines top padding for the pinned sequence
 paddingBottom | number | 0.5 | Defines top padding for the pinned sequence
 debug | boolean or {} | false | Turns debug mode off/on
@@ -60,10 +60,13 @@ Custom configurations for specific panels can be passed through the settings obj
 ```javascript
 // 1. Create sequence from selector #id as container
 const sequence = new ScrollSequence("#id", {
+    // 2. Set sequence trigger settings
+    onEnter: () => {
+        // Do something
+    },
+    panels: {
 
-    // 2. Configure any unique panel settings
-    settings: {
-
+        // 3. Set panel trigger settings
         // NOTE: Must match the [data-panel] value
         myPanel: {
             scrub: true,
@@ -164,8 +167,7 @@ ScrollSequence.js is a part of Terrain's Ghost library, and is currently in deve
 
 Ghost's code is non-obtrusive, and does not create any actions without your direction. It is designed to be as agnostic as possible, allowing it to function freely accross a large variety of applications.
 
-v0.1:
-
+v1.0:
 - [x] Basic architecture 
 - [x] Integrate base panel ScrollTriggers
 - [x] Add padding parameter to sequence object with a default
@@ -176,12 +178,10 @@ v0.1:
 - [x] Set defaults for container and panel queries
 - [x] Allow for multiple ScrollSequences on a single page
 - [x] Add support for top and bottom padding
-
-v1.0:
 - [x] Support margin param 
 - [x] States have configurable settings
 - [x] Add margin params to triggers
-- [ ] Clean settings objects
+- [x] Clean settings objects
 - [ ] Dynamic support for window resizing
 - [ ] Support mediaQueries
 - [ ] Add scale parameter for trigger heights
