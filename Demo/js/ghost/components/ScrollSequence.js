@@ -66,12 +66,16 @@ export class ScrollSequence {
                 str += `<div data-states="${name}" style="pointer-events: none; height: 100%; width: 100%; display: flex; flex-direction: column;">`
                 obj.states.forEach(state => {
                     str += `<div data-trigger="${state.name}" style="flex: 1 1 0%; `
-                    this.audit ? str += `border: 1px solid ${this.debug.secondary}; color: ${this.debug.secondary}; padding: 1rem; text-align: center;">${state.name}</div>` : `"></div>`
+
+                    this.audit ? str += `border: 1px solid ${this.debug.secondary}; color: ${this.debug.secondary}; padding: 1rem; text-align: center;">${state.name}</div>` : str += `"></div>`
+
+                    console.log(str)
                 })
                 str += `</div>`
             }
             str += `</div>`
             this.triggerContainer.innerHTML += str
+
 
             arr.push(obj)
         })
@@ -191,7 +195,7 @@ export class ScrollSequence {
                         <p>sequence: ${id}</p>
                         <p>progression: <span id="${id}-sequence-prog">0</span></p>
                         <p>viewport: ${window.innerHeight}px</p>
-                        <p>length: ${Math.ceil(this.container.offsetHeight / window.innerHeight * 100)}vh</p>
+                        <p>length: ${Math.round(this.container.offsetHeight / window.innerHeight * 100)}vh</p>
                     </div>
                 </div>
             `
@@ -204,7 +208,7 @@ export class ScrollSequence {
             // 3. Set scrollTrigger defaults
             this.debugEnter = (self) => {
                 currentSeq.innerHTML = self.trigger.dataset.trigger
-                panelHeight.innerHTML = self.trigger.offsetHeight / window.innerHeight * 100 + "vh"
+                panelHeight.innerHTML = Math.round(self.trigger.offsetHeight / window.innerHeight * 100) + "vh"
             }
             this.debugLeave = () => {
                 currentSeq.innerHTML = " "
