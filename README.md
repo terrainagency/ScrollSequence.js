@@ -185,6 +185,7 @@ v0.2:
 - [x] Add margin params to triggers
 - [x] Clean settings objects
 - [x] Create toLabel()
+- [ ] Position none debug param
 - [ ] Move triggers container into a single instance
 - [ ] Dynamic support for window resizing
 - [ ] Support mediaQueries
