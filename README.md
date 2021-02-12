@@ -198,7 +198,3 @@ v1.0:
 - [ ] Update branding for Ghost repositories
 
 [<- Back to Ghost](https://github.com/terrainagency/Ghost)
-
-## License
-
-[MIT](https://choosealicense.com/licenses/mit/)
