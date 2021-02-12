@@ -197,6 +197,8 @@ v1.0:
 - [ ] Create a webpack dev environment for Ghost repositories
 - [ ] Update branding for Ghost repositories
 
+[<- Back to Ghost](https://github.com/terrainagency/Ghost)
+
 ## License
 
 [MIT](https://choosealicense.com/licenses/mit/)
